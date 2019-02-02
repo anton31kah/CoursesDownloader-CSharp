@@ -1,6 +1,6 @@
 # CoursesDownloader-CSharp
 
-~~Same~~ as [CoursesDownloader-Python](https://github.com/anton31kah/CoursesDownloader) but in C#. Well it was the same, until I started adding to it, now it's way bigger, more powerful, and better.
+~~Same~~ as [CoursesDownloader-Python](https://github.com/anton31kah/CoursesDownloader-Python) but in C#. Well it was the same, until I started adding to it, now it's way bigger, more powerful, and better.
 
 This script is a simple downloader for the website http://courses.finki.ukim.mk/, it provides an automated way to download multiple files, it has some actions, and is constantly expanded, many features will be introduced in the future, but keep in mind that the purpose of this project was to automate the process so it should make it faster and easier and not slower and harder.
 
