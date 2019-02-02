@@ -11,11 +11,12 @@ This script is a simple downloader for the website http://courses.finki.ukim.mk/
 - Powerful actions like:
   - **Add**: Add anything to the queue, files, sections, even whole courses, using the previous patterns, so yes you can download the whole semester at once.
   - **Remove**: Remove what you added, applies to the same categories, and it doesn't complain whether the items were added.
-  - **Queue**: Show what will be downloaded in pages, you can **remove** from here as well, following the same patterns, or **clear** them all if you change your mind.
+  - **Queue**: Show what will be downloaded in pages, you can **remove** from here as well, following the same patterns, or **clear** them all if you change your mind, or **download** the queue.
   - **Back**, **Home**: Navigate around the console, home takes you to the main courses selection screen, while back goes one step up the tree.
   - **Copy**, **Open**: On links or anywhere (will be applied to the parent selection), copy or open the links you selected, either to a course or specific section, or even files.
   - **Exit**, **Quit**, **Close**; Self-explanatory.
   - **Refresh**: Refresh the course you're in.
+  - **Download**: Starts downloading the download queue.
   - And more to come.
 - Downloads external links as urls, pages as pdfs, do not miss anything while downloading.
 
@@ -25,7 +26,7 @@ This script is a simple downloader for the website http://courses.finki.ukim.mk/
     - [x] Link shortcuts.
 
 - [ ] Actions to implement:
-  - [ ] **DownloadQueue**: You prepared the download queue, now what? yup, sorry for forgeting this important action but it's late now. This action will start downloading the queue.
+  - [x] **DownloadQueue**: You prepared the download queue, now what? yup, sorry for forgeting this important action but it's late now. This action will start downloading the queue.
   - [ ] **SwitchSemester**: You ever need to restudy some old materials? or just want to share them with younger colleagues? This action will let you go switch to previous semesters.
   - [x] **Add**: Adds links to download queue (selected_links), either previously selected links (when in choose naming method) if no numbers are given, or if numbers given then add those, if called on a section or course, then recursivly everything inside that is added.
   - [x] **Queue**: Show download queue (selected_links) (think of a better command name).

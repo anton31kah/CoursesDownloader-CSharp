@@ -30,7 +30,7 @@ namespace CoursesDownloader.Models.Links
 
             string filename;
 
-            switch (CommonVars.NamingMethod)
+            switch (SharedVars.NamingMethod)
             {
                 case NamingMethod.CoursesName:
                     filename = FileFromCourses.FileNameAndExtensionOnly;

@@ -18,10 +18,10 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
                     () =>
                     {
                         State = ActionState.FoundAndHandled;
-                        var pastStates = CommonVars.ChosenItemsTillNow.Keys.ToArray();
+                        var pastStates = SharedVars.ChosenItemsTillNow.Keys.ToArray();
                         foreach (var pastState in pastStates)
                         {
-                            CommonVars.ChosenItemsTillNow.Remove(pastState);
+                            SharedVars.ChosenItemsTillNow.Remove(pastState);
                         }
                     });
             }
@@ -29,9 +29,9 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
             return this;
         }
 
-        public override int SetActionIdxPointer(int level)
+        public override void SetNextRunningActionType()
         {
-            return 0;
+            SharedVars.CurrentRunningActionType = RunningActionType.AskForCourse;
         }
     }
 }

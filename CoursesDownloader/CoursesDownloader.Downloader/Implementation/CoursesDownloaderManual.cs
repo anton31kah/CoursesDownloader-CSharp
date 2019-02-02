@@ -30,24 +30,24 @@ namespace CoursesDownloader.Downloader.Implementation
         private static async Task<ICourseLink> AskForCourse()
         {
             await CoursesExtractor.ExtractCourses();
-            var result = MenuChooseItem.AskInputForSingleItemFromList(CommonVars.Courses, "course");
-            CommonVars.SelectedCourseLink = result;
+            var result = MenuChooseItem.AskInputForSingleItemFromList(SharedVars.Courses, "course");
+            SharedVars.SelectedCourseLink = result;
             return result;
         }
 
         private static async Task<ISection> AskForSection()
         {
-            await SectionExtractor.ExtractSectionsForCourse(CommonVars.SelectedCourseLink);
-            var result = MenuChooseItem.AskInputForSingleItemFromList(CommonVars.Sections, "section");
-            CommonVars.SelectedSection = result;
+            await SectionExtractor.ExtractSectionsForCourse(SharedVars.SelectedCourseLink);
+            var result = MenuChooseItem.AskInputForSingleItemFromList(SharedVars.Sections, "section");
+            SharedVars.SelectedSection = result;
             return result;
         }
 
         private static IEnumerable<IDownloadableLink> AskForMultipleLinks()
         {
-            CommonVars.DownloadQueue.Clear();
-            var result = MenuChooseItem.AskInputForMultipleItemsFromList(CommonVars.SelectedSection.Links, "files").ToList();
-            CommonVars.DownloadQueue.AddUnique(result);
+            SharedVars.DownloadQueue.Clear();
+            var result = MenuChooseItem.AskInputForMultipleItemsFromList(SharedVars.SelectedSection.Links, "files").ToList();
+            SharedVars.DownloadQueue.AddUnique(result);
             return result;
         }
 
@@ -69,23 +69,23 @@ namespace CoursesDownloader.Downloader.Implementation
 
                 if (result == choicesPossible[0])
                 {
-                    CommonVars.NamingMethod = NamingMethod.UrlName;
+                    SharedVars.NamingMethod = NamingMethod.UrlName;
                     break;
                 }
 
                 if (result == choicesPossible[1])
                 {
-                    CommonVars.NamingMethod = NamingMethod.CoursesName;
+                    SharedVars.NamingMethod = NamingMethod.CoursesName;
                     break;
                 }
 
                 if (result == choicesPossible[2])
                 {
                     // because we're displaying in place but AskInputForSingleItemFromList still appends to breadcrumbs
-                    CommonVars.ChosenItemsTillNow.Remove(CommonVars.ChosenItemsTillNow.Keys.Last());
+                    SharedVars.ChosenItemsTillNow.Remove(SharedVars.ChosenItemsTillNow.Keys.Last());
 
                     choicesPossible.Remove(examplesChoice);
-                    var randomN = CommonVars.DownloadQueue.TakeRandomN(5);
+                    var randomN = SharedVars.DownloadQueue.TakeRandomN(5);
                     
                     var table = new ConsoleTableUtil("From Courses", "From URL (Default)");
 
@@ -107,36 +107,36 @@ namespace CoursesDownloader.Downloader.Implementation
             }
 
 
-            return CommonVars.NamingMethod;
+            return SharedVars.NamingMethod;
         }
 
         public static async Task Run()
         {
-            var currentActionIdx = 0;
+            SharedVars.CurrentRunningActionType = RunningActionType.AskForCourse;
             while (true)
             {
                 try
                 {
-                    switch (currentActionIdx)
+                    switch (SharedVars.CurrentRunningActionType)
                     {
-                        case 0:
+                        case RunningActionType.AskForCourse:
                             await AskForCourse();
                             break;
-                        case 1:
+                        case RunningActionType.AskForSection:
                             await AskForSection();
                             break;
-                        case 2:
+                        case RunningActionType.AskForMultipleLinks:
                             AskForMultipleLinks();
                             break;
-                        case 3:
+                        case RunningActionType.AskForNamingMethod:
                             await AskForNamingMethod();
                             break;
-                        case 4:
+                        case RunningActionType.DownloadSelectedLinks:
                             await DownloadSelectedLinks();
                             break;
                     }
 
-                    currentActionIdx++;
+                    SharedVars.CurrentRunningActionType++;
                 }
                 catch (QueueModificationBaseAction action)
                 {
@@ -148,16 +148,16 @@ namespace CoursesDownloader.Downloader.Implementation
                 }
                 catch (BaseAction action)
                 {
-                    currentActionIdx = action.SetActionIdxPointer(currentActionIdx);
+                    action.SetNextRunningActionType();
                 }
 
-                if (currentActionIdx > 4)
+                if (SharedVars.CurrentRunningActionType == RunningActionType.Repeat)
                 {
                     var startAgain = MenuChooseItem.AskYesNoQuestion("Do you want to start again? [Y/N] ",
                         () =>
                         {
-                            CommonVars.ChosenItemsTillNow.Clear();
-                            currentActionIdx = 0;
+                            SharedVars.ChosenItemsTillNow.Clear();
+                            SharedVars.CurrentRunningActionType = RunningActionType.AskForCourse;
                         }, 
                         CoursesClient.Dispose);
 
@@ -171,7 +171,7 @@ namespace CoursesDownloader.Downloader.Implementation
 
         private static async Task DownloadSelectedLinks()
         {
-            var totalLen = CommonVars.DownloadQueue.Count;
+            var totalLen = SharedVars.DownloadQueue.Count;
 
             Console.Clear();
 
@@ -179,7 +179,7 @@ namespace CoursesDownloader.Downloader.Implementation
 
             var i = 1;
 
-            foreach (var link in CommonVars.DownloadQueue)
+            foreach (var link in SharedVars.DownloadQueue)
             {
                 ProgressBarUtil.InitFileProgressBar(link);
                 ProgressBarUtil.TickMain($"Downloading... {i} / {totalLen}");
@@ -193,7 +193,7 @@ namespace CoursesDownloader.Downloader.Implementation
 
             Console.Clear();
 
-            Console.WriteLine(CommonVars.DownloadQueue
+            Console.WriteLine(SharedVars.DownloadQueue
                                             .Select((link, idx) => $"{idx + 1}. {link.Name}")
                                             .Prepend("Downloaded:")
                                             .Join()

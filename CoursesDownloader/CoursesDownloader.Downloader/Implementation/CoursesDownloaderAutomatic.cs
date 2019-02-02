@@ -15,7 +15,7 @@ namespace CoursesDownloader.Downloader.Implementation
 
         private static void HandleMPS()
         {
-            var courseLink = CommonVars.Courses.First(c => c.Name.ToLower().Contains("mps"));
+            var courseLink = SharedVars.Courses.First(c => c.Name.ToLower().Contains("mps"));
             var sectionsToCheck = new List<string>
             {
                 "Втор колоквиум",

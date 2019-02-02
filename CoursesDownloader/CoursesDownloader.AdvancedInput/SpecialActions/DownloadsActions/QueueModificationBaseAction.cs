@@ -49,23 +49,23 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
 
         private void AddRemoveSelectedItems(IEnumerable<int> sequence)
         {
-            var stagesDepth = CommonVars.ChosenItemsTillNow.Count;
+            var stagesDepth = SharedVars.ChosenItemsTillNow.Count;
             switch (stagesDepth)
             {
                 case 0: // add/remove selected courses
                     MatchingItemType = ItemTypeToAddRemove.Course;
-                    MatchingItems = sequence?.Where(i => i < CommonVars.Courses.Count) ??
-                                    Enumerable.Range(0, CommonVars.Courses.Count);
+                    MatchingItems = sequence?.Where(i => i < SharedVars.Courses.Count) ??
+                                    Enumerable.Range(0, SharedVars.Courses.Count);
                     break;
                 case 1: // add/remove selected section
                     MatchingItemType = ItemTypeToAddRemove.Section;
-                    MatchingItems = sequence?.Where(i => i < CommonVars.Sections.Count) ??
-                                    Enumerable.Range(0, CommonVars.Sections.Count);
+                    MatchingItems = sequence?.Where(i => i < SharedVars.Sections.Count) ??
+                                    Enumerable.Range(0, SharedVars.Sections.Count);
                     break;
                 case 2: // add/remove selected link
                     MatchingItemType = ItemTypeToAddRemove.Link;
-                    MatchingItems = sequence?.Where(i => i < CommonVars.SelectedSection.Count) ??
-                                    Enumerable.Range(0, CommonVars.SelectedSection.Count);
+                    MatchingItems = sequence?.Where(i => i < SharedVars.SelectedSection.Count) ??
+                                    Enumerable.Range(0, SharedVars.SelectedSection.Count);
                     break;
                 case 4: // ignore
                     MatchingItemType = ItemTypeToAddRemove.Link;

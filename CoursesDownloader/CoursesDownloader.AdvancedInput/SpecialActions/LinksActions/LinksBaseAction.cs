@@ -30,40 +30,40 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.LinksActions
                     () =>
                     {
                         State = ActionState.FoundAndHandled;
-                        var stagesDepth = CommonVars.ChosenItemsTillNow.Count;
+                        var stagesDepth = SharedVars.ChosenItemsTillNow.Count;
                         switch (stagesDepth)
                         {
                             case 0 when sequence == null:
                                 HandleLink("https://courses.finki.ukim.mk/");
                                 break;
                             case 0 when sequence != null:
-                                HandleMultipleLinks(CommonVars.Courses
+                                HandleMultipleLinks(SharedVars.Courses
                                     .Where((_, i) => sequence.Contains(i))
                                     .Select(link => link.Url)
                                 );
                                 break;
                             case 1 when sequence == null:
-                                HandleLink(CommonVars.SelectedCourseLink.Url);
+                                HandleLink(SharedVars.SelectedCourseLink.Url);
                                 break;
                             case 1 when sequence != null:
-                                HandleMultipleLinks(CommonVars.Sections
+                                HandleMultipleLinks(SharedVars.Sections
                                     .Where((_, i) => sequence.Contains(i))
                                     .Select(section => section.Header.AnchorId)
-                                    .Select(id => $"{CommonVars.SelectedCourseLink.Url}#{id}")
+                                    .Select(id => $"{SharedVars.SelectedCourseLink.Url}#{id}")
                                 );
                                 break;
                             case 2 when sequence == null:
-                                var anchorId = CommonVars.SelectedSection.Header.AnchorId;
-                                HandleLink($"{CommonVars.SelectedCourseLink.Url}#{anchorId}");
+                                var anchorId = SharedVars.SelectedSection.Header.AnchorId;
+                                HandleLink($"{SharedVars.SelectedCourseLink.Url}#{anchorId}");
                                 break;
                             case 2 when sequence != null:
-                                HandleMultipleLinks(CommonVars.SelectedSection.Links
+                                HandleMultipleLinks(SharedVars.SelectedSection.Links
                                     .Where((_, i) => sequence.Contains(i))
                                     .Select(link => link.Url)
                                 );
                                 break;
                             case 3:
-                                HandleMultipleLinks(CommonVars.DownloadQueue.Select(l => l.Url).ToList());
+                                HandleMultipleLinks(SharedVars.DownloadQueue.Select(l => l.Url).ToList());
                                 break;
                         }
                     });

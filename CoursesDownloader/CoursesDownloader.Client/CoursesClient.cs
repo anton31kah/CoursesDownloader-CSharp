@@ -128,7 +128,7 @@ namespace CoursesDownloader.Client
 
         public static void FindSessKey(string responseContent)
         {
-            CommonVars.SessKey = Regex.Match(responseContent, "(?<=sesskey=).{10}").Value;
+            SharedVars.SessKey = Regex.Match(responseContent, "(?<=sesskey=).{10}").Value;
         }
 
         private static async Task Init()

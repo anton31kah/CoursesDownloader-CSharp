@@ -39,22 +39,17 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
 
                 Console.WriteLine("Queue:");
 
-                var totalPages = (int) Math.Ceiling(CommonVars.DownloadQueue.Count / 20.0);
+                var totalPages = (int) Math.Ceiling(SharedVars.DownloadQueue.Count / 20.0);
 
-                linksPage = CommonVars.DownloadQueue.Skip(page * pageSize).Take(pageSize)
+                linksPage = SharedVars.DownloadQueue.Skip(page * pageSize).Take(pageSize)
                     .Select((link, i) => $"{i + 1}. {link.Name}").Join();
 
                 ConsoleUtils.WriteLine(linksPage, ConsoleColor.White);
 
-                var pagesItemsTotal =
-                    $"page {page + 1}/{totalPages} | items {CommonVars.DownloadQueue.Count}";
-
-                message = CommonVars.DownloadQueue.Skip((page + 1) * pageSize).Take(pageSize).Any()
-                    ? $"Want to see more ({pagesItemsTotal})? [Y/N] "
-                    : "Again (Empty Queue)? [Y/N] ";
+                message = FormatMessage(page, totalPages, pageSize, linksPage);
 
                 page++;
-                if (page * pageSize > CommonVars.DownloadQueue.Count)
+                if (page * pageSize > SharedVars.DownloadQueue.Count)
                 {
                     page = 0;
                 }
@@ -62,16 +57,38 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
             } while (MenuChooseItem.AskYesNoQuestion(message,
                 onOther: fullInputString =>
                 {
-                    page = OnInQueueRemoveAction(fullInputString, linksPage, page, pageSize);
+                    page = OnInQueueActionWords(fullInputString, linksPage, page, pageSize);
                 }));
         }
 
-        private static int OnInQueueRemoveAction(string fullInputString, string linksPage, int page, int pageSize)
+        private static string FormatMessage(int page, int totalPages, int pageSize, string linksPage)
+        {
+            var currentPage = page + 1;
+            var currentItemsFrom = page * pageSize + 1;
+            var currentItemsTo = page * pageSize + linksPage.Count(c => c == '\n') + 1;
+            var maxItems = SharedVars.DownloadQueue.Count;
+
+            var pagesItemsViewString = $"page {currentPage}/{totalPages} | " +
+                                       $"items {currentItemsFrom}-{currentItemsTo}/{maxItems}";
+            pagesItemsViewString = SharedVars.DownloadQueue.Count == 0 ? "Empty Queue" : pagesItemsViewString;
+
+            var message = SharedVars.DownloadQueue.Skip((page + 1) * pageSize).Take(pageSize).Any()
+                ? $"Want to see more ({pagesItemsViewString})? [Y/N] "
+                : $"Again ({pagesItemsViewString})? [Y/N] ";
+            return message;
+        }
+
+        private static int OnInQueueActionWords(string fullInputString, string linksPage, int page, int pageSize)
         {
             if (fullInputString.ToLower().Contains("clear"))
             {
-                CommonVars.DownloadQueue.Clear();
+                SharedVars.DownloadQueue.Clear();
                 return 0;
+            }
+
+            if (fullInputString.ToLower().Contains("download"))
+            {
+                throw new DownloadAction();
             }
 
             if (fullInputString.ToLower().Contains("remove"))
@@ -90,7 +107,7 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
 
                     if (piece.ToLower() == "all")
                     {
-                        CommonVars.DownloadQueue.Clear();
+                        SharedVars.DownloadQueue.Clear();
                         return 0;
                     }
                 }
@@ -99,10 +116,10 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
                 {
                     page--;
 
-                    var matchingLinks = CommonVars.DownloadQueue.Skip(page * pageSize)
+                    var matchingLinks = SharedVars.DownloadQueue.Skip(page * pageSize)
                         .Take(pageSize)
                         .Where((_, i) => sequence.Contains(i));
-                    CommonVars.DownloadQueue.RemoveAll(link => matchingLinks.Contains(link));
+                    SharedVars.DownloadQueue.RemoveAll(link => matchingLinks.Contains(link));
                 }
             }
 

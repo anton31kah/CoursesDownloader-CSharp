@@ -17,7 +17,7 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions
             "Open", "Copy",
             "Exit", "Quit", "Close",
             "Refresh",
-            "Add", "Remove", "Queue"
+            "Add", "Remove", "Queue", "Download"
         };
         private static readonly string[] HelpKeywords = {"Help", "Actions", "???"};
 
@@ -85,9 +85,8 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions
             return inputString.ToLower().Contains($"{Type}?".ToLower());
         }
 
-        public virtual int SetActionIdxPointer(int level)
+        public virtual void SetNextRunningActionType()
         {
-            return level;
         }
     }
 }

@@ -4,12 +4,13 @@ using CoursesDownloader.IModels.ILinks;
 
 namespace CoursesDownloader.SharedVariables
 {
-    public static class CommonVars
+    public static class SharedVars
     {
         private static readonly object Lock = new object();
 
         #region Backing Fields
 
+        private static RunningActionType _currentRunningActionType;
         private static List<ICourseLink> _courses;
         private static List<ISection> _sections;
         private static Dictionary<string, string> _chosenItemsTillNow;
@@ -21,6 +22,24 @@ namespace CoursesDownloader.SharedVariables
 
         #endregion
 
+        public static RunningActionType CurrentRunningActionType
+        {
+            get
+            {
+                lock (Lock)
+                {
+                    return _currentRunningActionType;
+                }
+            }
+            set
+            {
+                lock (Lock)
+                {
+                    _currentRunningActionType = value;
+                }
+            }
+        }
+        
         public static List<ICourseLink> Courses
         {
             get

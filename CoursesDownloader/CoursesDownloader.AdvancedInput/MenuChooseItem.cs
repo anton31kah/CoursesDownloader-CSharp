@@ -21,7 +21,7 @@ namespace CoursesDownloader.AdvancedIO
 
             if (!insideCall)
             {
-                foreach (var prevItem in CommonVars.ChosenItemsTillNow.Values)
+                foreach (var prevItem in SharedVars.ChosenItemsTillNow.Values)
                 {
                     ConsoleUtils.WriteLine(prevItem, ConsoleIOType.BreadCrumbs);
                 }
@@ -89,7 +89,7 @@ namespace CoursesDownloader.AdvancedIO
 
             if (!insideCall)
             {
-                CommonVars.ChosenItemsTillNow[itemWord] = $"You chose {selectedItem?.ToString().FirstLine().TrimInnerSpaces()}";
+                SharedVars.ChosenItemsTillNow[itemWord] = $"You chose {selectedItem?.ToString().FirstLine().TrimInnerSpaces()}";
             }
 
             return selectedItem;
@@ -100,7 +100,7 @@ namespace CoursesDownloader.AdvancedIO
         {
             Console.Clear();
 
-            foreach (var prevItem in CommonVars.ChosenItemsTillNow.Values)
+            foreach (var prevItem in SharedVars.ChosenItemsTillNow.Values)
             {
                 ConsoleUtils.WriteLine(prevItem, ConsoleIOType.BreadCrumbs);
             }
@@ -218,7 +218,7 @@ namespace CoursesDownloader.AdvancedIO
 
             selectedItems = selectedItems.SortedUnique().ToList();
 
-            CommonVars.ChosenItemsTillNow[itemsWord] = $"You chose {BuildRangesString(selectedItems)}";
+            SharedVars.ChosenItemsTillNow[itemsWord] = $"You chose {BuildRangesString(selectedItems)}";
 
             return selectedItems.Select(i => itemsList[i - 1]).ToList();
         }

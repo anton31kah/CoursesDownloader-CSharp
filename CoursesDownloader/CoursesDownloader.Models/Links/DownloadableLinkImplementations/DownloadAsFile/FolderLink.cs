@@ -14,7 +14,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
         public FolderLink(string name = "", string url = "") : base(name, url)
         {
             var id = Regex.Match(Url, @"\d+$").Value;
-            var sessKey = CommonVars.SessKey;
+            var sessKey = SharedVars.SessKey;
             var data = new Dictionary<string, string>
             {
                 {"id", id},

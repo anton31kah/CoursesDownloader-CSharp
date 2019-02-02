@@ -17,9 +17,9 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
         internal static async Task HandleRefreshAction()
         {
             await CoursesExtractor.ExtractCourses();
-            if (CommonVars.SelectedCourseLink != null)
+            if (SharedVars.SelectedCourseLink != null)
             {
-                await SectionExtractor.ExtractSectionsForCourse(CommonVars.SelectedCourseLink);
+                await SectionExtractor.ExtractSectionsForCourse(SharedVars.SelectedCourseLink);
             }
         }
 
@@ -30,20 +30,20 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
             switch (action.MatchingItemType)
             {
                 case ItemTypeToAddRemove.Course:
-                    matchingLinks = CommonVars.Courses
+                    matchingLinks = SharedVars.Courses
                         .Where((course, j) => action.MatchingItems.Contains(j))
                         .SelectMany(course => SectionExtractor.ExtractSectionsForCourse(course).Result
                             .SelectMany(section => section.Links))
                         .ToList();
                     break;
                 case ItemTypeToAddRemove.Section:
-                    matchingLinks = CommonVars.Sections
+                    matchingLinks = SharedVars.Sections
                         .Where((section, j) => action.MatchingItems.Contains(j))
                         .SelectMany(section => section.Links)
                         .ToList();
                     break;
                 case ItemTypeToAddRemove.Link:
-                    matchingLinks = CommonVars.SelectedSection.Links
+                    matchingLinks = SharedVars.SelectedSection.Links
                         .ToList();
                     break;
             }
@@ -54,16 +54,16 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                 if (action is AddAction)
                 {
                     
-                    var count = matchingLinks.Except(CommonVars.DownloadQueue).Count();
-                    CommonVars.DownloadQueue.AddUnique(matchingLinks);
+                    var count = matchingLinks.Except(SharedVars.DownloadQueue).Count();
+                    SharedVars.DownloadQueue.AddUnique(matchingLinks);
 
                     message = $"Added {count} items (to revert, " +
                               "simply call Remove like you did with Add in the same way and location";
                 }
                 else
                 {
-                    var count = CommonVars.DownloadQueue.Intersect(matchingLinks).Count();
-                    CommonVars.DownloadQueue.RemoveAll(link => matchingLinks.Contains(link));
+                    var count = SharedVars.DownloadQueue.Intersect(matchingLinks).Count();
+                    SharedVars.DownloadQueue.RemoveAll(link => matchingLinks.Contains(link));
 
                     message = $"Removed {count} items (to revert, " +
                               "simply call Add like you did with Remove in the same way and location";

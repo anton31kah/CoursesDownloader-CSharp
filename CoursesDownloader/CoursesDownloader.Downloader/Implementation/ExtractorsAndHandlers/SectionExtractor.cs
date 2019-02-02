@@ -41,9 +41,9 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
             doc.LoadHtml(coursePageText);
             var headersLinks = doc.DocumentNode.SelectNodes(XPathFilterLinksHeadersFolders);
 
-            CommonVars.Sections = new List<ISection>();
+            SharedVars.Sections = new List<ISection>();
             var currentSection = new Section();
-            CommonVars.Sections.Add(currentSection);
+            SharedVars.Sections.Add(currentSection);
 
             foreach (var headerLink in headersLinks)
             {
@@ -65,7 +65,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                         var headerTag = headerLink.OriginalName;
                         var headerId = headerLink.FindIdFromAncestors();
                         currentSection = new Section(new Header(headerName, headerTag, headerId));
-                        CommonVars.Sections.Add(currentSection);
+                        SharedVars.Sections.Add(currentSection);
                         break;
                     case ItemType.File:
                         currentSection.Links.Add(new FileLink(innerText, href));
@@ -84,9 +84,9 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                 }
             }
 
-            CommonVars.Sections = CommonVars.Sections.Where(s => s.Links.IsNotEmpty()).ToList();
+            SharedVars.Sections = SharedVars.Sections.Where(s => s.Links.IsNotEmpty()).ToList();
 
-            return CommonVars.Sections;
+            return SharedVars.Sections;
         }
 
         private static ItemType TryGetItemType(HtmlNode headerLink)

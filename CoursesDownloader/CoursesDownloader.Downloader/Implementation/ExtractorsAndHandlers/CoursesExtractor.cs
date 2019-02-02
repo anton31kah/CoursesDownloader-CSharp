@@ -20,8 +20,8 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
         private static readonly Dictionary<int, string> SemesterCoursesLongFormNameRegex;
         private static readonly Dictionary<int, string> SemesterCoursesShortFormNameRegex;
 
-        private static string CurrentSemesterCourseLongFormNameRegex => SemesterCoursesLongFormNameRegex[CommonVars.CurrentSemesterNumber];
-        private static string CurrentSemesterCourseShortFormNameRegex => SemesterCoursesShortFormNameRegex[CommonVars.CurrentSemesterNumber];
+        private static string CurrentSemesterCourseLongFormNameRegex => SemesterCoursesLongFormNameRegex[SharedVars.CurrentSemesterNumber];
+        private static string CurrentSemesterCourseShortFormNameRegex => SemesterCoursesShortFormNameRegex[SharedVars.CurrentSemesterNumber];
 
         static CoursesExtractor()
         {
@@ -77,7 +77,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
             // TL;DR extract long names and short names, and join them
             // LONG: extract long names, distinct by URL, same for short names, then join on URL,
             //       then put short with left padding, then put long, names, and finally toList
-            CommonVars.Courses = 
+            SharedVars.Courses = 
                 coursesLinks
                     .Where(l => Regex.IsMatch(l.InnerText, currentSemesterCourseLongFormNameRegex))
                     .Select(l => new
@@ -105,7 +105,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                         )
                 .ToList<ICourseLink>();
 
-            return CommonVars.Courses;
+            return SharedVars.Courses;
         }
     }
 }

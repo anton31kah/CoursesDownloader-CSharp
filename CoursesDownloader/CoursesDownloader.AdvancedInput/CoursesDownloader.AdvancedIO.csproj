@@ -67,6 +67,7 @@
     <Compile Include="SpecialActions\DownloadsActions\QueueModificationBaseAction.cs" />
     <Compile Include="SpecialActions\DownloadsActions\RemoveAction.cs" />
     <Compile Include="SpecialActions\LinksActions\CopyAction.cs" />
+    <Compile Include="SpecialActions\DownloadsActions\DownloadAction.cs" />
     <Compile Include="SpecialActions\LinksActions\LinksBaseAction.cs" />
     <Compile Include="SpecialActions\LinksActions\OpenAction.cs" />
   </ItemGroup>
