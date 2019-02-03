@@ -35,10 +35,6 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
             {
                 SharedVars.CurrentRunningActionType--;
             }
-            else
-            {
-                SharedVars.CurrentRunningActionType = RunningActionType.AskForCourse;
-            }
         }
     }
 }

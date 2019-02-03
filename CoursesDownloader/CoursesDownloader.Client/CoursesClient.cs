@@ -10,7 +10,6 @@ using CoursesDownloader.AdvancedIO.ConsoleHelpers;
 using CoursesDownloader.Client.Helpers;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.SharedVariables;
-using CredentialManagement;
 using HtmlAgilityPack;
 
 namespace CoursesDownloader.Client
@@ -101,8 +100,8 @@ namespace CoursesDownloader.Client
             {
                 username = ConsoleUtils.ReadLine("Please enter your CAS username >>> ", ConsoleIOType.Question);
                 password = ConsoleUtils.ReadLine("Please enter your CAS password >>> ", ConsoleIOType.Question, true);
-
-                CredentialUtil.SetCredentials(CASTarget, username, password, PersistanceType.Enterprise);
+                
+                CredentialUtil.SetCredentials(CASTarget, username, password);
             }
 
             loginData["username"] = username;
@@ -122,7 +121,7 @@ namespace CoursesDownloader.Client
                         goto EnterCredentialsAgain;
                     }
 
-                    FindSessKey(await response.GetTextNow()); 
+                    FindSessKey(await response.Content.ReadAsStringAsync()); 
                 }
             }
             
@@ -195,6 +194,7 @@ namespace CoursesDownloader.Client
                 TempCASTarget = null;
             }
 
+            CASTarget = DefaultCASTarget;
             _downloadProgressTrackingHandler.Dispose();
             SessionClient.Dispose();
         }

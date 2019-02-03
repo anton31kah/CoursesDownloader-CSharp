@@ -9,42 +9,16 @@ namespace CoursesDownloader.Common.ExtensionMethods
         private static readonly Lazy<Random> LazyRandom = new Lazy<Random>(() => new Random());
         private static Random Random => LazyRandom.Value;
 
-        public static bool IsEmpty<T>(this IEnumerable<T> list)
-        {
-            return !list.Any();
-        }
-
         public static bool IsEmptyOrNull<T>(this IEnumerable<T> list)
         {
             return list == null || !list.Any();
         }
-
-        public static bool IsEmptyButNotNull<T>(this IEnumerable<T> list)
-        {
-            return list != null && !list.Any();
-        }
-
-        public static bool IsNotEmpty<T>(this IEnumerable<T> list)
-        {
-            return list.Any();
-        }
-
-        public static bool IsNotEmptyNorNull<T>(this IEnumerable<T> list)
-        {
-            return list != null && list.Any();
-        }
-
+        
         public static IEnumerable<T> SortedUnique<T>(this IEnumerable<T> list)
         {
             return list.Distinct().OrderBy(i => i);
         }
-
-        public static bool IsAscending<T>(this IEnumerable<T> list)
-        {
-            var enumerable = list.ToList();
-            return enumerable.OrderBy(i => i).SequenceEqual(enumerable);
-        }
-
+        
         public static IEnumerable<IEnumerable<int>> ConsecutiveGroupBy(this IEnumerable<int> iterable)
         {
             return iterable.Distinct()

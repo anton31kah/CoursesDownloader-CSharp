@@ -19,6 +19,7 @@ This script is a simple downloader for the website http://courses.finki.ukim.mk/
   - **Download**: Starts downloading the download queue.
   - **SwitchSemester**: Switch to an old semester.
   - **TempUserLogIn**, **TempUserLogOut**: Log in or out as a temp user, the credentials will be deleted safely after log out (or after console close, everything is disposed in whatever situation).
+  - **LogOut**: Log out and be prompted to enter credentials again, any stored credentials will be disposed.
   - And more to come.
 - Downloads external links as urls, pages as pdfs, do not miss anything while downloading.
 

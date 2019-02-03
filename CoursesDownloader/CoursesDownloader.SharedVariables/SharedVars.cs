@@ -19,6 +19,7 @@ namespace CoursesDownloader.SharedVariables
         private static List<IDownloadableLink> _selectedLinks;
         private static string _sessKey;
         private static NamingMethod _namingMethod = NamingMethod.CoursesName;
+        private static int _currentSemesterNumber;
 
         #endregion
 
@@ -174,7 +175,22 @@ namespace CoursesDownloader.SharedVariables
             }
         }
 
-        public static int CurrentSemesterNumber { get; set; }
-
+        public static int CurrentSemesterNumber
+        {
+            get
+            {
+                lock (Lock)
+                {
+                    return _currentSemesterNumber;
+                }
+            }
+            set
+            {
+                lock (Lock)
+                {
+                    _currentSemesterNumber = value;
+                }
+            }
+        }
     }
 }

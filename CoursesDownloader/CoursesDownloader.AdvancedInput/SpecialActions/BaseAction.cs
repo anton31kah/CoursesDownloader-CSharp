@@ -18,7 +18,7 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions
             "Exit", "Quit", "Close",
             "Refresh",
             "Add", "Remove", "Queue", "Download",
-            "TempUserLogIn", "TempUserLogOut", "SwitchSemester"
+            "TempUserLogIn", "TempUserLogOut", "SwitchSemester", "LogOut"
         };
         private static readonly string[] HelpKeywords = {"Help", "Actions", "???"};
 

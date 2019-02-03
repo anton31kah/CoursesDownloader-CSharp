@@ -10,19 +10,9 @@ namespace CoursesDownloader.Common.ExtensionMethods
 {
     public static class StringUtils
     {
-        public static bool IsEmpty(this string str)
-        {
-            return str.Length == 0;
-        }
-
         public static bool IsNullOrEmpty(this string str)
         {
             return string.IsNullOrEmpty(str);
-        }
-
-        public static bool IsEmptyButNotNull(this string str)
-        {
-            return str != null && str.IsEmpty();
         }
 
         public static bool IsNotEmpty(this string str)
@@ -34,47 +24,17 @@ namespace CoursesDownloader.Common.ExtensionMethods
         {
             return !str.IsNullOrEmpty();
         }
-
-        public static string IfIsEmpty(this string str, Func<string> replacement)
-        {
-            return str.IsEmpty() ? replacement.Invoke() : str;
-        }
-
-        public static string IfIsEmpty(this string str, string replacement)
-        {
-            return str.IsEmpty() ? replacement : str;
-        }
-
-        public static string IfIsNullOrEmpty(this string str, Func<string> replacement)
-        {
-            return str.IsNullOrEmpty() ? replacement.Invoke() : str;
-        }
-
+        
         public static string IfIsNullOrEmpty(this string str, string replacement)
         {
             return str.IsNullOrEmpty() ? replacement : str;
         }
-
-        public static string IfIsNotEmpty(this string str, Func<string> replacement, string otherwise = "")
-        {
-            return str.IsNotEmpty() ? replacement.Invoke() : otherwise;
-        }
-
-        public static string IfIsNotEmpty(this string str, string replacement, string otherwise = "")
-        {
-            return str.IsNotEmpty() ? replacement : otherwise;
-        }
-
+        
         public static string IfIsNotNullNorEmpty(this string str, Func<string> replacement, string otherwise = "")
         {
             return str.IsNotNullNorEmpty() ? replacement.Invoke() : otherwise;
         }
-
-        public static string IfIsNotNullNorEmpty(this string str, string replacement, string otherwise = "")
-        {
-            return str.IsNotNullNorEmpty() ? replacement : otherwise;
-        }
-
+        
         public static string Join<T>(this IEnumerable<T> list, string joiner = "\n")
         {
             return string.Join(joiner, list);
@@ -86,20 +46,8 @@ namespace CoursesDownloader.Common.ExtensionMethods
             
             // replaces each char, instead of combining multiple underscores
             // return str.Split(toReplace).Join(replacement);
-            
         }
-
-        public static string TransliterateMkToEn(this string text)
-        {
-            var charsMap = MkToEnChars.CharsMap;
-            return charsMap.Aggregate(text, (current, value) => current.Replace(value.Key, value.Value));
-        }
-
-        public static string ToTitleCase(this string text)
-        {
-            return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
-        }
-
+        
         public static string TrimInnerSpaces(this string text)
         {
             return Regex.Replace(text, @"\s+", " ");

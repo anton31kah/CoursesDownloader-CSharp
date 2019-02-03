@@ -27,7 +27,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
         {
             const string winterSuffix = "ZzWwЗз";
             const string summerSuffix = "LlSsЛл";
-
+            
             SemesterCoursesLongFormNameRegex = new Dictionary<int, string>
             {
                 {1, $@"^.{{6,}}2016.{{0,2}}2017.{{0,5}}[{winterSuffix}].*$"},
@@ -44,11 +44,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
         public static async Task<List<ICourseLink>> ExtractCourses()
         {
             await CoursesClient.LazyRefresh();
-            string coursesPageText;
-            using (var coursesPage = await CoursesClient.SessionClient.GetAsync(CoursesProfileAllCoursesUrl))
-            {
-                coursesPageText = await coursesPage.GetTextNow();
-            }
+            var coursesPageText = await CoursesClient.SessionClient.GetStringAsync(CoursesProfileAllCoursesUrl);
             CoursesClient.FindSessKey(coursesPageText);
             var doc = new HtmlDocument();
             doc.LoadHtml(coursesPageText);
@@ -81,11 +77,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
         public static async Task<int> ExtractSemestersCount()
         {
             await CoursesClient.LazyRefresh();
-            string profileHtml;
-            using (var coursesPage = await CoursesClient.SessionClient.GetAsync(CoursesProfileAllCoursesUrl))
-            {
-                profileHtml = await coursesPage.GetTextNow();
-            }
+            var profileHtml = await CoursesClient.SessionClient.GetStringAsync(CoursesProfileAllCoursesUrl);
             var doc = new HtmlDocument();
             doc.LoadHtml(profileHtml);
             var coursesLinks = doc.DocumentNode.SelectNodes(XPathFilterProfileCoursesLinks);

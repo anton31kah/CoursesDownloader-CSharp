@@ -40,9 +40,6 @@
     <Reference Include="HtmlAgilityPack, Version=1.8.11.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.8.11\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="MoreLinq, Version=3.1.0.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
-      <HintPath>..\packages\morelinq.3.1.0\lib\net451\MoreLinq.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -58,7 +55,6 @@
   <ItemGroup>
     <Compile Include="CoursesDownloader.cs" />
     <Compile Include="Implementation\ExtractorsAndHandlers\ActionHandler.cs" />
-    <Compile Include="Implementation\CoursesDownloaderAutomatic.cs" />
     <Compile Include="Implementation\CoursesDownloaderManual.cs" />
     <Compile Include="Implementation\ExtractorsAndHandlers\CoursesExtractor.cs" />
     <Compile Include="Implementation\ExtractorsAndHandlers\SectionExtractor.cs" />

@@ -22,57 +22,50 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
         {
             switch (action)
             {
-                case TempUserLogInAction _:
-                    await CoursesClient.TempLogInUser();
+                case CloseAction _:
+                    HandleCloseAction();
                     break;
-                case TempUserLogOutAction _:
-                    CoursesClient.TempLogOutUser();
+
+                case LogOutAction _:
+                    await HandleLogOutAction();
                     break;
+
                 case QueueModificationBaseAction queueModificationBaseAction:
-                    HandleAddRemoveActions(queueModificationBaseAction);
+                    HandleQueueModificationBaseAction(queueModificationBaseAction);
                     break;
+
                 case RefreshAction _:
                     await HandleRefreshAction();
                     break;
+
                 case SwitchSemesterAction _:
                     await HandleSwitchSemesterAction();
+                    break;
+
+                case TempUserLogInAction _:
+                    await HandleTempUserLogInAction();
+                    break;
+
+                case TempUserLogOutAction _:
+                    HandleTempUserLogOutAction();
                     break;
             }
 
             action.SetNextRunningActionType();
         }
 
-        private static async Task HandleSwitchSemesterAction()
+        private static void HandleCloseAction()
         {
-            var namedSemesters = new List<string>
-            {
-                "1st Semester",
-                "2nd Semester",
-                "3rd Semester"
-            };
-            namedSemesters.AddRange(Enumerable.Range(4, 5).Select(i => $"{i}th Semester"));
-
-            var semestersCount = await CoursesExtractor.ExtractSemestersCount();
-            
-            var itemsList = namedSemesters.Take(semestersCount).ToList();
-
-            var chosenItem = MenuChooseItem.AskInputForSingleItemFromList(itemsList, "semester", "switch to", breadcrumbs: false);
-
-            var chosenSemester = namedSemesters.IndexOf(chosenItem) + 1;
-
-            SharedVars.CurrentSemesterNumber = chosenSemester;
+            CoursesClient.Dispose();
         }
 
-        private static async Task HandleRefreshAction()
+        private static async Task HandleLogOutAction()
         {
-            await CoursesExtractor.ExtractCourses();
-            if (SharedVars.SelectedCourseLink != null)
-            {
-                await SectionExtractor.ExtractSectionsForCourse(SharedVars.SelectedCourseLink);
-            }
+            CoursesClient.Dispose();
+            await CoursesDownloaderManual.Init();
         }
 
-        private static void HandleAddRemoveActions(QueueModificationBaseAction action)
+        private static void HandleQueueModificationBaseAction(QueueModificationBaseAction action)
         {
             var matchingLinks = new List<IDownloadableLink>();
 
@@ -130,6 +123,47 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                 }
 
             } while (MenuChooseItem.AskYesNoQuestion("Do you want to revert now? [Y/N] "));
+        }
+
+        private static async Task HandleRefreshAction()
+        {
+            await CoursesExtractor.ExtractCourses();
+            if (SharedVars.SelectedCourseLink != null)
+            {
+                await SectionExtractor.ExtractSectionsForCourse(SharedVars.SelectedCourseLink);
+            }
+        }
+
+        private static async Task HandleSwitchSemesterAction()
+        {
+            var namedSemesters = new List<string>
+            {
+                "1st Semester",
+                "2nd Semester",
+                "3rd Semester"
+            };
+            namedSemesters.AddRange(Enumerable.Range(4, 5).Select(i => $"{i}th Semester"));
+
+            var semestersCount = await CoursesExtractor.ExtractSemestersCount();
+            
+            var itemsList = namedSemesters.Take(semestersCount).ToList();
+
+            var chosenItem = MenuChooseItem.AskInputForSingleItemFromList(itemsList, "semester", "switch to", breadcrumbs: false);
+
+            var chosenSemester = namedSemesters.IndexOf(chosenItem) + 1;
+
+            SharedVars.CurrentSemesterNumber = chosenSemester;
+        }
+
+        private static async Task HandleTempUserLogInAction()
+        {
+            await CoursesClient.TempLogInUser();
+            await CoursesDownloaderManual.Init();
+        }
+
+        private static void HandleTempUserLogOutAction()
+        {
+            CoursesClient.TempLogOutUser();
         }
     }
 }

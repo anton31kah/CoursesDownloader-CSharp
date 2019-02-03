@@ -16,7 +16,6 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
                     () =>
                     {
                         State = ActionState.FoundAndHandled;
-                        Environment.Exit(0);
                     });
             }
 

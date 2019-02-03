@@ -29,11 +29,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
         public static async Task<List<ISection>> ExtractSectionsForCourse(ICourseLink courseLink)
         {
             await CoursesClient.LazyRefresh();
-            string coursePageText;
-            using (var coursePage = await CoursesClient.SessionClient.GetAsync(courseLink.Url))
-            {
-                coursePageText = await coursePage.GetTextNow();
-            }
+            var coursePageText = await CoursesClient.SessionClient.GetStringAsync(courseLink.Url);
             CoursesClient.FindSessKey(coursePageText);
             var doc = new HtmlDocument();
             doc.LoadHtml(coursePageText);
@@ -61,7 +57,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                     case ItemType.Header:
                         var headerName = headerLink.InnerText.DecodeHtml();
                         var headerTag = headerLink.OriginalName;
-                        var headerId = headerLink.FindIdFromAncestors();
+                        var headerId = FindIdFromAncestors(headerLink);
                         currentSection = new Section(new Header(headerName, headerTag, headerId));
                         SharedVars.Sections.Add(currentSection);
                         break;
@@ -82,9 +78,22 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                 }
             }
 
-            SharedVars.Sections = SharedVars.Sections.Where(s => s.Links.IsNotEmpty()).ToList();
+            SharedVars.Sections = SharedVars.Sections.Where(s => s.Links.Any()).ToList();
 
             return SharedVars.Sections;
+        }
+
+        private static string FindIdFromAncestors(HtmlNode htmlElement)
+        {
+            var anchorId = htmlElement.Attributes.FirstOrDefault(e => e.Name == "id")?.Value;
+
+            while (anchorId.IsNullOrEmpty())
+            {
+                htmlElement = htmlElement.ParentNode;
+                anchorId = htmlElement.Attributes.FirstOrDefault(e => e.Name == "id")?.Value;
+            }
+
+            return anchorId;
         }
 
         private static ItemType TryGetItemType(HtmlNode headerLink)
