@@ -92,12 +92,15 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
 
             var semestersCount =
                 SemesterCoursesLongFormNameRegex
+                    .Reverse()
                     .Select(pair => new
                     {
+                        Number = pair.Key,
                         Courses = coursesLinks
                             .Where(node => Regex.IsMatch(node.InnerText, pair.Value))
                     })
-                    .Count(semester => semester.Courses.Any());
+                    .First(semester => semester.Courses.Any())
+                    .Number;
 
             return semestersCount;
         }
