@@ -17,6 +17,8 @@ This script is a simple downloader for the website http://courses.finki.ukim.mk/
   - **Exit**, **Quit**, **Close**; Self-explanatory.
   - **Refresh**: Refresh the course you're in.
   - **Download**: Starts downloading the download queue.
+  - **SwitchSemester**: Switch to an old semester.
+  - **TempUserLogIn**, **TempUserLogOut**: Log in or out as a temp user, the credentials will be deleted safely after log out (or after console close, everything is disposed in whatever situation).
   - And more to come.
 - Downloads external links as urls, pages as pdfs, do not miss anything while downloading.
 
@@ -27,7 +29,7 @@ This script is a simple downloader for the website http://courses.finki.ukim.mk/
 
 - [ ] Actions to implement:
   - [x] **DownloadQueue**: You prepared the download queue, now what? yup, sorry for forgeting this important action but it's late now. This action will start downloading the queue.
-  - [ ] **SwitchSemester**: You ever need to restudy some old materials? or just want to share them with younger colleagues? This action will let you go switch to previous semesters.
+  - [x] **SwitchSemester**: You ever need to restudy some old materials? or just want to share them with younger colleagues? This action will let you go switch to previous semesters.
   - [x] **Add**: Adds links to download queue (selected_links), either previously selected links (when in choose naming method) if no numbers are given, or if numbers given then add those, if called on a section or course, then recursivly everything inside that is added.
   - [x] **Queue**: Show download queue (selected_links) (think of a better command name).
   - [x] **Clear**: Can clear the download queue, or if in course or section, removes those from download queue, if in naming method, removes those selected.

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcut.Helpers
+namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers
 {
     public static class CrossPlatformShortcutFileHelper
     {

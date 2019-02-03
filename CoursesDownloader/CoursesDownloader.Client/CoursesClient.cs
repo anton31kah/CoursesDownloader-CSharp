@@ -17,7 +17,10 @@ namespace CoursesDownloader.Client
 {
     public static class CoursesClient
     {
-        private const string CASTarget = "https://cas.finki.ukim.mk/";
+        private const string DefaultCASTarget = "https://cas.finki.ukim.mk/";
+        private static string CASTarget { get; set; } = DefaultCASTarget;
+        private static string TempCASTarget;
+
         private static ProgressMessageHandler _downloadProgressTrackingHandler;
 
         private static DateTime LoginTime { get; set; }
@@ -133,7 +136,7 @@ namespace CoursesDownloader.Client
 
         private static async Task Init()
         {
-            if (SessionClient == null || LoginTime == default(DateTime))
+            if (SessionClient == null || LoginTime == default)
             {
                 await CreateSession();
                 return;
@@ -154,8 +157,44 @@ namespace CoursesDownloader.Client
             return SessionClient;
         }
 
+        public static async Task<HttpClient> TempLogInUser()
+        {
+            // a temp user is logged in, log them out first
+            if (TempCASTarget != null && CASTarget == TempCASTarget)
+            {
+                TempLogOutUser();
+            }
+
+            TempCASTarget = DefaultCASTarget + "temp";
+            CASTarget = TempCASTarget;
+
+            await CreateSession();
+
+            return SessionClient;
+        }
+
+        public static void TempLogOutUser()
+        {
+            if (TempCASTarget != null && CASTarget == TempCASTarget)
+            {
+                CredentialUtil.RemoveCredentials(TempCASTarget);
+            }
+
+            TempCASTarget = null;
+            CASTarget = DefaultCASTarget;
+
+            SessionClient.Dispose();
+        }
+
         public static void Dispose()
         {
+            // Just in case
+            if (TempCASTarget != null)
+            {
+                CredentialUtil.RemoveCredentials(TempCASTarget);
+                TempCASTarget = null;
+            }
+
             _downloadProgressTrackingHandler.Dispose();
             SessionClient.Dispose();
         }

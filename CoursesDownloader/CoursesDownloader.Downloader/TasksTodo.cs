@@ -7,10 +7,9 @@
         // TODO 01 IMPLEMENT THE REST OF PLAN
 
         // TODO 02 Download external links as pdf using athenapdf
-        // TODO 04 SWITCHSEM: ALLOW SEMESTER CHANGE WITH AN ACTION
-        
+
         // TODO 06 SEARCH FOR CROSS PLATFORM CREDENTIAL MANAGER
-        
+
         // TODO 07 REFACTOR, RENAME METHODS, TRY MAKE IT CROSS PLATFORM
     }
 }

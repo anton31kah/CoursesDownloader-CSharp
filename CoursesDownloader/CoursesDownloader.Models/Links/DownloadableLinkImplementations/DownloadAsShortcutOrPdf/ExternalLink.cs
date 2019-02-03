@@ -5,9 +5,9 @@ using CoursesDownloader.Client;
 using CoursesDownloader.Client.Helpers;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsShortuct;
-using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcut.Helpers;
+using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers;
 
-namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcut
+namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf
 {
     public class ExternalLink : DownloadableLink, IExternalLink
     {

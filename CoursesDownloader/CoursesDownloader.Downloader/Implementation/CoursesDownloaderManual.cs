@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using CoursesDownloader.AdvancedIO;
 using CoursesDownloader.AdvancedIO.ConsoleHelpers;
 using CoursesDownloader.AdvancedIO.SpecialActions;
-using CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions;
-using CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions;
 using CoursesDownloader.Client;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers;
@@ -25,6 +23,8 @@ namespace CoursesDownloader.Downloader.Implementation
             Console.OutputEncoding = Encoding.UTF8;
 
             await CoursesClient.LazyRefresh();
+
+            SharedVars.CurrentSemesterNumber = await CoursesExtractor.ExtractSemestersCount();
         }
 
         private static async Task<ICourseLink> AskForCourse()
@@ -138,17 +138,9 @@ namespace CoursesDownloader.Downloader.Implementation
 
                     SharedVars.CurrentRunningActionType++;
                 }
-                catch (QueueModificationBaseAction action)
-                {
-                    ActionHandler.HandleAddRemoveActions(action);
-                }
-                catch (RefreshAction)
-                {
-                    await ActionHandler.HandleRefreshAction();
-                }
                 catch (BaseAction action)
                 {
-                    action.SetNextRunningActionType();
+                    await ActionHandler.HandleAction(action);
                 }
 
                 if (SharedVars.CurrentRunningActionType == RunningActionType.Repeat)
@@ -159,7 +151,7 @@ namespace CoursesDownloader.Downloader.Implementation
                             SharedVars.ChosenItemsTillNow.Clear();
                             SharedVars.CurrentRunningActionType = RunningActionType.AskForCourse;
                         }, 
-                        CoursesClient.Dispose);
+                        Dispose);
 
                     if (!startAgain) // onNo
                     {
@@ -201,6 +193,11 @@ namespace CoursesDownloader.Downloader.Implementation
                 
 
             Console.WriteLine();
+        }
+
+        public static void Dispose()
+        {
+            CoursesClient.Dispose();
         }
     }
 }

@@ -12,14 +12,14 @@ namespace CoursesDownloader.AdvancedIO
     public static class MenuChooseItem
     {
         public static T AskInputForSingleItemFromList<T>(IList<T> itemsList, string itemWord,
-            string actionWord = "view", bool withClear = true, bool insideCall = false)
+            string actionWord = "view", bool withClear = true, bool insideCall = false, bool breadcrumbs = true)
         {
             if (withClear)
             {
                 Console.Clear();
             }
 
-            if (!insideCall)
+            if (!insideCall && breadcrumbs)
             {
                 foreach (var prevItem in SharedVars.ChosenItemsTillNow.Values)
                 {
@@ -87,7 +87,7 @@ namespace CoursesDownloader.AdvancedIO
                 }
             }
 
-            if (!insideCall)
+            if (!insideCall && breadcrumbs)
             {
                 SharedVars.ChosenItemsTillNow[itemWord] = $"You chose {selectedItem?.ToString().FirstLine().TrimInnerSpaces()}";
             }

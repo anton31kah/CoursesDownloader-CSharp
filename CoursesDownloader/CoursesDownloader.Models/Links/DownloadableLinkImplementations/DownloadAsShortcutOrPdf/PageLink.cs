@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CoursesDownloader.Client;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations;
-using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcut.Helpers;
+using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers;
 using HtmlAgilityPack;
 using PdfSharp;
 using TheArtOfDev.HtmlRenderer.PdfSharp;

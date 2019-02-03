@@ -17,7 +17,8 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions
             "Open", "Copy",
             "Exit", "Quit", "Close",
             "Refresh",
-            "Add", "Remove", "Queue", "Download"
+            "Add", "Remove", "Queue", "Download",
+            "TempUserLogIn", "TempUserLogOut", "SwitchSemester"
         };
         private static readonly string[] HelpKeywords = {"Help", "Actions", "???"};
 
@@ -62,7 +63,9 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions
 
         private static BaseAction GetActionObjectFrom(string actionName)
         {
-            var actionClassName = actionName.ToTitleCase() + "Action";
+            var actionCorrectName = Children.Single(action => action.Equals(actionName, StringComparison.OrdinalIgnoreCase));
+            
+            var actionClassName = actionCorrectName + "Action";
 
             var actionClassFullName = Assembly.GetExecutingAssembly().GetTypes()
                 .First(a => a.FullName.Contains(actionClassName)).FullName;

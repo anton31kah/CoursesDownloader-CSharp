@@ -7,7 +7,7 @@ namespace CoursesDownloader.SharedVariables
     public static class SharedVars
     {
         private static readonly object Lock = new object();
-
+        
         #region Backing Fields
 
         private static RunningActionType _currentRunningActionType;
@@ -174,9 +174,7 @@ namespace CoursesDownloader.SharedVariables
             }
         }
 
-        private const int CurrentSemesterNumberDefault = 5;
-
-        public static int CurrentSemesterNumber { get; set; } = CurrentSemesterNumberDefault;
+        public static int CurrentSemesterNumber { get; set; }
 
     }
 }

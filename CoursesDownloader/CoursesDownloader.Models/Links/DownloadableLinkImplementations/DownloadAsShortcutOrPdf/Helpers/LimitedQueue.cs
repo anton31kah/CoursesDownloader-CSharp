@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcut.Helpers
+namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers
 {
     public class LimitedQueue<T> : Queue<T>, IEnumerable<T>
     {

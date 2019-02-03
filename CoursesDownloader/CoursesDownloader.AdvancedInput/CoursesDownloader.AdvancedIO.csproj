@@ -70,6 +70,9 @@
     <Compile Include="SpecialActions\DownloadsActions\DownloadAction.cs" />
     <Compile Include="SpecialActions\LinksActions\LinksBaseAction.cs" />
     <Compile Include="SpecialActions\LinksActions\OpenAction.cs" />
+    <Compile Include="SpecialActions\UserActions\SwitchSemesterAction.cs" />
+    <Compile Include="SpecialActions\UserActions\TempUserLogInAction.cs" />
+    <Compile Include="SpecialActions\UserActions\TempUserLogOutAction.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
