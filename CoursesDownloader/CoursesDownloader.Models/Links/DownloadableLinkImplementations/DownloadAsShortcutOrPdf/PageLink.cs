@@ -1,12 +1,13 @@
-﻿using System.Net.Http.Handlers;
+﻿using System.IO;
+using System.Net.Http.Handlers;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
+using CoursesDownloader.Client.Helpers;
 using CoursesDownloader.Common.ExtensionMethods;
-using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations;
+using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsShortcut;
 using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers;
+using DinkToPdf;
 using HtmlAgilityPack;
-using PdfSharp;
-using TheArtOfDev.HtmlRenderer.PdfSharp;
 
 namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf
 {
@@ -14,8 +15,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
     {
         private bool IsTitleExtracted { get; set; }
         private string Title { get; set; }
-
-
+        
         public PageLink(string name = "", string url = "") : base(name, url)
         {
         }
@@ -24,7 +24,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
         {
             await CoursesClient.LazyRefresh();
             
-            using (var html = await CoursesClient.SessionClient.GetStreamAsync(Url))
+            using (var html = await CoursesClient.SessionClient.GetStreamAsyncHttp(Url))
             {
                 var title = LazyHtmlParser.FindTitleInHtml(html);
                 Title = title;
@@ -40,21 +40,21 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
             ReportProgress(0, 1024);
 
             var html = await ExtractMainHtml();
-
+            
             ReportProgress(html.Length / 2.0, html.Length);
 
-            var pdf = PdfGenerator.GeneratePdf(html, PageSize.A4);
-            
-            ReportProgress(pdf.FileSize * 0.9, pdf.FileSize);
+            var pdf = GeneratePdf(html);
 
-            pdf.Save(filename);
+            ReportProgress(pdf.Length * 0.9, pdf.Length);
 
-            ReportProgress(pdf.FileSize, pdf.FileSize);
+            File.WriteAllBytes(filename, pdf);
+
+            ReportProgress(pdf.Length, pdf.Length);
         }
 
         private async Task<string> ExtractMainHtml()
         {
-            var html = await CoursesClient.SessionClient.GetStringAsync(Url);
+            var html = await CoursesClient.SessionClient.GetStringAsyncHttp(Url);
 
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
@@ -63,6 +63,38 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
             html = mainNode.OuterHtml;
 
             return html;
+        }
+
+        private byte[] GeneratePdf(string html)
+        {
+            byte[] pdfBytes;
+            using (var pdfTools = new PdfTools())
+            {
+                var converter = new BasicConverter(pdfTools);
+
+                var doc = new HtmlToPdfDocument
+                {
+                    GlobalSettings =
+                    {
+                        ColorMode = ColorMode.Color,
+                        Orientation = Orientation.Portrait,
+                        PaperSize = PaperKind.A4
+                    },
+                    Objects =
+                    {
+                        new ObjectSettings
+                        {
+                            PagesCount = true,
+                            HtmlContent = html,
+                            WebSettings = {DefaultEncoding = "utf-8"}
+                        }
+                    }
+                };
+
+                pdfBytes = converter.Convert(doc);
+            }
+
+            return pdfBytes;
         }
 
         private void ReportProgress(double done, double max)

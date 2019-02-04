@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
+﻿namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
 {
     public class CloseAction : BaseAction
     {

@@ -10,25 +10,6 @@ namespace CoursesDownloader.Client.Helpers
 {
     public static class CredentialUtil
     {
-        /* File format:
-         * when we encrypt the credential we get byte[]
-         * each byte is 8 bits, and each bit is made to look like a 4 digit hex number
-         * so 130d is 10000010b, stored as 0001 0000 0000 0000 0000 0000 0001 0000
-         * we store these separated by zero lines
-         * and credentials are separated by one lines
-         *
-         * zero line 0000 0000 0000 0000 0000 0000 0000 0000
-         * byte 0001 0000 0000 0000 0000 0000 0001 0000
-         * zero line
-         * byte
-         * ...
-         * zero line
-         * byte
-         * zero
-         * one line 1111 1111 1111 1111 1111 1111 1111 1111
-         * ... and the same is repeated
-         */
-
         private class Credential
         {
             public string Target { get; }
@@ -48,7 +29,7 @@ namespace CoursesDownloader.Client.Helpers
             }
         }
 
-        private static readonly byte[] Entropy = Encoding.UTF8.GetBytes("CoursesDownloaderCredentials");
+        private static readonly byte[] CryptoKey = Encoding.UTF8.GetBytes("CoursesDownloaderSafeCredentials");
 
         private static readonly string CredentialsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CoursesDownloader");
         private static readonly string CredentialsPath = Path.Combine(CredentialsDirectory, "credentials");
@@ -66,37 +47,14 @@ namespace CoursesDownloader.Client.Helpers
             {
                 using (var streamReader = new StreamReader(fileStream))
                 {
-                    Credential credential = null;
-                    var bytes = new List<byte>();
-
-                    var zeroLine = true; // first line is zero line
-
                     string line;
                     while ((line = streamReader.ReadLine()) != null)
                     {
-                        // break line
-                        if (line.Where(c => c != ' ').All(c => c == '1'))
+                        var credential = DecryptCredential(line);
+                        if (credential.Target == target)
                         {
-                            credential = DecryptCredential(bytes);
-                            if (credential.Target == target)
-                            {
-                                break;
-                            }
-                            continue;
+                            return (credential.UserName, credential.Password);
                         }
-
-                        if (!zeroLine)
-                        {
-                            var byteNumber = LineToByte(line);
-                            bytes.Add(byteNumber);
-                        }
-
-                        zeroLine = !zeroLine;
-                    }
-
-                    if (credential != null)
-                    {
-                        return (credential.UserName, credential.Password);
                     }
                 }
             }
@@ -148,28 +106,16 @@ namespace CoursesDownloader.Client.Helpers
         }
 
 
-        private static void SaveCredentials(List<Credential> credentials)
+        private static void SaveCredentials(IEnumerable<Credential> credentials)
         {
             using (var fileStream = File.Open(CredentialsPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (var streamWriter = new StreamWriter(fileStream))
                 {
-                    var zeroLine = Enumerable.Repeat("0000", 8).Join(" ");
-                    var oneLine = Enumerable.Repeat("1111", 8).Join(" ");
-
                     foreach (var credential in credentials)
                     {
-                        var encryptCredentialBytes = EncryptCredential(credential);
-                        foreach (var credentialByte in encryptCredentialBytes)
-                        {
-                            var byteLine = ByteToLine(credentialByte);
-
-                            streamWriter.WriteLine(zeroLine);
-                            streamWriter.WriteLine(byteLine);
-                        }
-
-                        streamWriter.WriteLine(zeroLine);
-                        streamWriter.WriteLine(oneLine);
+                        var encryptedCredential = EncryptCredential(credential);
+                        streamWriter.WriteLine(encryptedCredential);
                     }
                 }
             }
@@ -190,29 +136,11 @@ namespace CoursesDownloader.Client.Helpers
             {
                 using (var streamReader = new StreamReader(fileStream))
                 {
-                    var bytes = new List<byte>();
-
-                    var zeroLine = true; // first line is zero line
-
                     string line;
                     while ((line = streamReader.ReadLine()) != null)
                     {
-                        // break line
-                        if (line.Where(c => c != ' ').All(c => c == '1'))
-                        {
-                            var credential = DecryptCredential(bytes);
-                            credentials.Add(credential);
-                            bytes.Clear();
-                            continue;
-                        }
-
-                        if (!zeroLine)
-                        {
-                            var byteNumber = LineToByte(line);
-                            bytes.Add(byteNumber);
-                        }
-
-                        zeroLine = !zeroLine;
+                        var credential = DecryptCredential(line);
+                        credentials.Add(credential);
                     }
                 }
             }
@@ -222,39 +150,84 @@ namespace CoursesDownloader.Client.Helpers
 
         #region Crypto Helping Methods
         
-        private static string ByteToLine(byte credentialByte)
+        private static string EncryptCredential(Credential credential)
         {
-            var byteLine = Convert.ToString(credentialByte, 2)
-                .PadLeft(8, '0')
-                .Select(c => $"{c}".PadLeft(4, '0'))
-                .Join(" ");
-            return byteLine;
+            var encryptedString = Encrypt(credential.ToString(), CryptoKey);
+            return encryptedString;
         }
 
-        private static byte LineToByte(string line)
+        private static Credential DecryptCredential(string encryptedCredential)
         {
-            var binaryDigits = line.Split(' ');
-            var binaryNumber = binaryDigits.Select(d => d[3]).Join("");
-            var byteNumber = Convert.ToByte(binaryNumber, 2);
-            return byteNumber;
-        }
-
-        private static byte[] EncryptCredential(Credential credential)
-        {
-            var bytes = Encoding.UTF8.GetBytes(credential.ToString());
-            var encryptedBytes = ProtectedData.Protect(bytes, Entropy, DataProtectionScope.CurrentUser);
-            return encryptedBytes;
-        }
-
-        private static Credential DecryptCredential(List<byte> bytes)
-        {
-            var decrypted = ProtectedData.Unprotect(bytes.ToArray(), Entropy, DataProtectionScope.CurrentUser);
-            var credentialJoined = Encoding.UTF8.GetString(decrypted);
-            var credentialParts = credentialJoined.Split('\n');
+            var decrypted = Decrypt(encryptedCredential, CryptoKey);
+            var credentialParts = decrypted.Split('\n');
             var credential = new Credential(credentialParts[0], credentialParts[1], credentialParts[2]);
             return credential;
         }
-        
+
+        #endregion
+
+        #region Crypto
+
+        private static string Encrypt(string text, byte[] cryptoKey)
+        {
+            using (var aesAlg = Aes.Create())
+            {
+                using (var encryptor = aesAlg.CreateEncryptor(cryptoKey, aesAlg.IV))
+                {
+                    using (var msEncrypt = new MemoryStream())
+                    {
+                        using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                        using (var swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            swEncrypt.Write(text);
+                        }
+
+                        var iv = aesAlg.IV;
+
+                        var decryptedContent = msEncrypt.ToArray();
+
+                        var result = new byte[iv.Length + decryptedContent.Length];
+
+                        Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
+                        Buffer.BlockCopy(decryptedContent, 0, result, iv.Length, decryptedContent.Length);
+
+                        return Convert.ToBase64String(result);
+                    }
+                }
+            }
+        }
+
+        private static string Decrypt(string encryptedText, byte[] cryptoKey)
+        {
+            var fullCipher = Convert.FromBase64String(encryptedText);
+
+            var iv = new byte[16];
+            var cipher = new byte[fullCipher.Length - iv.Length];
+
+            Buffer.BlockCopy(fullCipher, 0, iv, 0, iv.Length);
+            Buffer.BlockCopy(fullCipher, iv.Length, cipher, 0, fullCipher.Length - iv.Length);
+
+            using (var aesAlg = Aes.Create())
+            {
+                using (var decryptor = aesAlg.CreateDecryptor(cryptoKey, iv))
+                {
+                    string result;
+                    using (var msDecrypt = new MemoryStream(cipher))
+                    {
+                        using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                        {
+                            using (var srDecrypt = new StreamReader(csDecrypt))
+                            {
+                                result = srDecrypt.ReadToEnd();
+                            }
+                        }
+                    }
+
+                    return result;
+                }
+            }
+        }
+
         #endregion
     }
 }

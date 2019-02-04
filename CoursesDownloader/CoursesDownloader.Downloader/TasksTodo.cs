@@ -2,10 +2,7 @@
 {
     internal static class TasksTodo
     {
-        // TODO 00 CHECK TODO TASK LIST (CTRL+\, T) (AND SORT BY DESCRIPTION)
-
-        // TODO 01 Download external links as pdf using athenapdf
+        // TO/DO 00 CHECK TO/DO TASK LIST (CTRL+\, T) (AND SORT BY DESCRIPTION)
         
-        // TODO 04 MAKE IT CROSS PLATFORM
     }
 }

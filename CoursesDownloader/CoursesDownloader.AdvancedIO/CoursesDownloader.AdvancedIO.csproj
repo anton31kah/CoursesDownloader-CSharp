@@ -2,18 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ByteSize" Version="1.3.0" />
-    <PackageReference Include="DinkToPdf" Version="1.0.8" />
-    <PackageReference Include="ShellProgressBar" Version="4.2.0" />
+    <PackageReference Include="ConsoleTables" Version="2.2.0" />
+    <PackageReference Include="TextCopy" Version="1.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoursesDownloader.Client\CoursesDownloader.Client.csproj" />
     <ProjectReference Include="..\CoursesDownloader.Common\CoursesDownloader.Common.csproj" />
-    <ProjectReference Include="..\CoursesDownloader.IModels\CoursesDownloader.IModels.csproj" />
     <ProjectReference Include="..\CoursesDownloader.SharedVariables\CoursesDownloader.SharedVariables.csproj" />
   </ItemGroup>
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
+using CoursesDownloader.Client.Helpers;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks;
@@ -29,7 +30,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
         public static async Task<List<ISection>> ExtractSectionsForCourse(ICourseLink courseLink)
         {
             await CoursesClient.LazyRefresh();
-            var coursePageText = await CoursesClient.SessionClient.GetStringAsync(courseLink.Url);
+            var coursePageText = await CoursesClient.SessionClient.GetStringAsyncHttp(courseLink.Url);
             CoursesClient.FindSessKey(coursePageText);
             var doc = new HtmlDocument();
             doc.LoadHtml(coursePageText);

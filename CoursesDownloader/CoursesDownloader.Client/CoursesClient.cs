@@ -37,7 +37,12 @@ namespace CoursesDownloader.Client
 
         private static async Task CreateSession()
         {
-            _downloadProgressTrackingHandler = new ProgressMessageHandler(new HttpClientHandler());
+            var httpClientHandler = new HttpClientHandler
+            {
+                AllowAutoRedirect = false
+            };
+
+            _downloadProgressTrackingHandler = new ProgressMessageHandler(httpClientHandler);
 
             SessionClient = new HttpClient(_downloadProgressTrackingHandler)
             {
@@ -52,7 +57,7 @@ namespace CoursesDownloader.Client
 
                 try
                 {
-                    login = await SessionClient.GetAsync("http://courses.finki.ukim.mk/login/index.php");
+                    login = await SessionClient.GetAsyncHttp("http://courses.finki.ukim.mk/login/index.php");
 
                     if (!login.IsSuccessStatusCode)
                     {
@@ -111,7 +116,7 @@ namespace CoursesDownloader.Client
             {
                 Console.WriteLine("Logging into CAS");
                 
-                using (var response = await SessionClient.PostAsync(login.RequestMessage.RequestUri, loginDataContent))
+                using (var response = await SessionClient.PostAsyncHttp(login.RequestMessage.RequestUri, loginDataContent))
                 {
                     // if redirected to CAS, wrong password or username
                     if (response.RequestMessage.RequestUri.Host == new Uri(CASTarget).Host)
