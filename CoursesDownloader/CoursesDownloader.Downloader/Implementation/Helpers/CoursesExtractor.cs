@@ -11,7 +11,7 @@ using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsS
 using CoursesDownloader.SharedVariables;
 using HtmlAgilityPack;
 
-namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
+namespace CoursesDownloader.Downloader.Implementation.Helpers
 {
     public static class CoursesExtractor
     {

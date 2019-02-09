@@ -8,16 +8,19 @@ namespace CoursesDownloader.Models
     [DebuggerDisplay("Header(name={Name}, order={Order}, anchorId={AnchorId})")]
     public class Header : IHeader, IEquatable<Header>
     {
+        public ISection ParentSection { get; }
+
         public string Name { get; }
         public string Order { get; }
         public string AnchorId { get; }
 
-        public Header(string name = "", string order = "", string anchorId = "")
+        public Header(string name = "", string order = "", string anchorId = "", ISection parentSection = null)
         {
             Name = name;
             var tagOrder = Regex.Match(order, @"\d+").Value;
             Order = tagOrder;
             AnchorId = anchorId;
+            ParentSection = parentSection;
         }
 
         #region Equality

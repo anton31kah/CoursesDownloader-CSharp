@@ -8,7 +8,7 @@ using CoursesDownloader.AdvancedIO.ConsoleHelpers;
 using CoursesDownloader.AdvancedIO.SpecialActions;
 using CoursesDownloader.Client;
 using CoursesDownloader.Common.ExtensionMethods;
-using CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers;
+using CoursesDownloader.Downloader.Implementation.Helpers;
 using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks;
 using CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers;
@@ -45,7 +45,6 @@ namespace CoursesDownloader.Downloader.Implementation
 
         private static IEnumerable<IDownloadableLink> AskForMultipleLinks()
         {
-            SharedVars.DownloadQueue.Clear();
             var result = MenuChooseItem.AskInputForMultipleItemsFromList(SharedVars.SelectedSection.Links, "files").ToList();
             SharedVars.DownloadQueue.AddUnique(result);
             return result;
@@ -171,11 +170,15 @@ namespace CoursesDownloader.Downloader.Implementation
 
             var i = 1;
 
+            var extraPathPerLink = ExtraPathsHelper.FillExtraPaths();
+
             foreach (var link in SharedVars.DownloadQueue)
             {
+                extraPathPerLink.TryGetValue(link, out var middlePath);
+
                 ProgressBarUtil.InitFileProgressBar(link);
                 ProgressBarUtil.TickMain($"Downloading... {i} / {totalLen}");
-                await link.Download();
+                await link.Download(middlePath);
                 i++;
             }
 
@@ -190,11 +193,13 @@ namespace CoursesDownloader.Downloader.Implementation
                                             .Prepend("Downloaded:")
                                             .Join()
             );
-                
+
+            SharedVars.DownloadQueue.Clear();
+
 
             Console.WriteLine();
         }
-
+        
         public static void Dispose()
         {
             CoursesClient.Dispose();

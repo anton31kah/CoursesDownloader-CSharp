@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CoursesDownloader.Client;
 using CoursesDownloader.Client.Helpers;
 using CoursesDownloader.Common.ExtensionMethods;
+using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsFile;
 
 namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsFile
@@ -11,7 +12,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
     {
         protected string DownloadUrl { private get; set; }
 
-        protected DownloadableLinkAsFile(string name = "", string url = "") : base(name, url)
+        protected DownloadableLinkAsFile(string name = "", string url = "", ISection parentSection = null) : base(name, url, parentSection)
         {
         }
         

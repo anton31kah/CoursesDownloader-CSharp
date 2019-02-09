@@ -14,7 +14,7 @@ using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels.ILinks;
 using CoursesDownloader.SharedVariables;
 
-namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
+namespace CoursesDownloader.Downloader.Implementation.Helpers
 {
     internal static class ActionHandler
     {
@@ -86,6 +86,7 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                     break;
                 case ItemTypeToAddRemove.Link:
                     matchingLinks = SharedVars.SelectedSection.Links
+                        .Where((link, j) => action.MatchingItems.Contains(j))
                         .ToList();
                     break;
             }
@@ -95,7 +96,6 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                 string message;
                 if (action is AddAction)
                 {
-                    
                     var count = matchingLinks.Except(SharedVars.DownloadQueue).Count();
                     SharedVars.DownloadQueue.AddUnique(matchingLinks);
 

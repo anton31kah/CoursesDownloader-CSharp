@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsFile;
 using CoursesDownloader.SharedVariables;
 
@@ -11,7 +12,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
     {
         private const string FolderDownloadLink = "http://courses.finki.ukim.mk/mod/folder/download_folder.php";
 
-        public FolderLink(string name = "", string url = "") : base(name, url)
+        public FolderLink(string name = "", string url = "", ISection parentSection = null) : base(name, url, parentSection)
         {
             var id = Regex.Match(Url, @"\d+$").Value;
             var sessKey = SharedVars.SessKey;

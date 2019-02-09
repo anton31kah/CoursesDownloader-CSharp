@@ -35,7 +35,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers
             get => _fileNameOnly;
             set
             {
-                value = FileNameHelpers.FixInvalidFileNameChars(value);
+                value = FileNameHelpers.FixInvalidFilePathChars(value);
                 _fileNameOnly = value;
 
 //                var (dir, _, ext) = Split();
@@ -75,7 +75,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers
                 _fileNameAndExtensionOnly = value;
 
                 var (_, name, ext) = Split(_fileNameAndExtensionOnly);
-                name = FileNameHelpers.FixInvalidFileNameChars(name);
+                name = FileNameHelpers.FixInvalidFilePathChars(name);
                 _fileNameOnly = name;
                 _fileExtensionOnly = ext;
                 _fullPathAndFileAndExtension = Path.Combine(_filePathOnly, $"{name}{ext}");
@@ -93,7 +93,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers
                 _fullPathAndFileAndExtension = value;
 
                 var (dir, name, ext) = Split(_fullPathAndFileAndExtension);
-                name = FileNameHelpers.FixInvalidFileNameChars(name);
+                name = FileNameHelpers.FixInvalidFilePathChars(name);
                 _filePathOnly = dir;
                 _fileNameOnly = name;
                 _fileExtensionOnly = ext;

@@ -13,7 +13,7 @@ using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsS
 using CoursesDownloader.SharedVariables;
 using HtmlAgilityPack;
 
-namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
+namespace CoursesDownloader.Downloader.Implementation.Helpers
 {
     public static class SectionExtractor
     {
@@ -59,20 +59,20 @@ namespace CoursesDownloader.Downloader.Implementation.ExtractorsAndHandlers
                         var headerName = headerLink.InnerText.DecodeHtml();
                         var headerTag = headerLink.OriginalName;
                         var headerId = FindIdFromAncestors(headerLink);
-                        currentSection = new Section(new Header(headerName, headerTag, headerId));
+                        currentSection = new Section(new Header(headerName, headerTag, headerId), courseLink);
                         SharedVars.Sections.Add(currentSection);
                         break;
                     case ItemType.File:
-                        currentSection.Links.Add(new FileLink(innerText, href));
+                        currentSection.Links.Add(new FileLink(innerText, href, currentSection));
                         break;
                     case ItemType.Folder:
-                        currentSection.Links.Add(new FolderLink(innerText, href));
+                        currentSection.Links.Add(new FolderLink(innerText, href, currentSection));
                         break;
                     case ItemType.Url:
-                        currentSection.Links.Add(new ExternalLink(innerText, href));
+                        currentSection.Links.Add(new ExternalLink(innerText, href, currentSection));
                         break;
                     case ItemType.Page:
-                        currentSection.Links.Add(new PageLink(innerText, href));
+                        currentSection.Links.Add(new PageLink(innerText, href, currentSection));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

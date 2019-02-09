@@ -12,19 +12,20 @@ namespace CoursesDownloader.Models
     {
         public IHeader Header { get; }
         public IList<IDownloadableLink> Links { get; }
+        public ICourseLink ParentCourse { get; }
 
         public ILink this[int key] => Links[key];
         public ILink this[string key] => Links.First(l => l.Name == key || l.Url == key);
         public int Count => Links.Count;
 
-        public Section(Header header = null, List<IDownloadableLink> links = null)
+        public Section(IHeader header = null, ICourseLink parentCourse = null)
         {
-            Header = header ?? new Header();
-            Links = links ?? new List<IDownloadableLink>();
+            Header = header != null
+                ? new Header(header.Name, header.Order, header.AnchorId, this)
+                : new Header(parentSection: this);
+            ParentCourse = parentCourse;
+            Links = new List<IDownloadableLink>();
         }
-
-        public Section(string header, List<IDownloadableLink> links = null) 
-            : this(new Header(header), links) {}
 
         public bool Contains(ILink link)
         {
@@ -39,12 +40,12 @@ namespace CoursesDownloader.Models
             if (ReferenceEquals(this, other)) return true;
             return Equals(Header, other.Header) && Equals(Links, other.Links);
         }
-
+        
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (obj.GetType() != this.GetType()) return false;
             return Equals((Section) obj);
         }
 
@@ -65,7 +66,7 @@ namespace CoursesDownloader.Models
         {
             return !Equals(left, right);
         }
-
+        
         #endregion
 
         public override string ToString()

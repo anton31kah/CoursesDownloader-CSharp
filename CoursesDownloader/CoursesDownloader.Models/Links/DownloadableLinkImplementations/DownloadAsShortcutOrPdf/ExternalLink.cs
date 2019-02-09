@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CoursesDownloader.Client;
 using CoursesDownloader.Client.Helpers;
 using CoursesDownloader.Common.ExtensionMethods;
+using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsShortcut;
 using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers;
 
@@ -15,7 +16,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
         private static string ExternalUrl { get; set; }
         private string Title { get; set; }
 
-        public ExternalLink(string name = "", string url = "") : base(name, url)
+        public ExternalLink(string name = "", string url = "", ISection parentSection = null) : base(name, url, parentSection)
         {
         }
 

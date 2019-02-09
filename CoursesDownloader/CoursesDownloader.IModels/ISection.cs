@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CoursesDownloader.IModels.ILinks;
 
 namespace CoursesDownloader.IModels
@@ -7,6 +8,7 @@ namespace CoursesDownloader.IModels
     {
         IHeader Header { get; }
         IList<IDownloadableLink> Links { get; }
+        ICourseLink ParentCourse { get; }
 
         ILink this[int key] { get; }
         ILink this[string key] { get; }
