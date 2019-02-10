@@ -7,13 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CoursesDownloader.Client\CoursesDownloader.Client.csproj" />
     <ProjectReference Include="..\CoursesDownloader.Common\CoursesDownloader.Common.csproj" />
     <ProjectReference Include="..\CoursesDownloader.Models\CoursesDownloader.Models.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y &quot;$(SolutionDir)wkhtmltopdfdlls\*.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;" />
+    <Exec Command="xcopy /y &quot;$(SolutionDir)wkhtmltopdfdlls\x64\*.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;" />
   </Target>
 
 </Project>

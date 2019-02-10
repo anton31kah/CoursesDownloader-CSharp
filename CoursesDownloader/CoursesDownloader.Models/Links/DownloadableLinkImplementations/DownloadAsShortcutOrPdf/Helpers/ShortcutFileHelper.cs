@@ -2,7 +2,7 @@
 
 namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers
 {
-    public static class CrossPlatformShortcutFileHelper
+    public static class ShortcutFileHelper
     {
         public static string FromTitleAndUrl(string title, string url)
         {

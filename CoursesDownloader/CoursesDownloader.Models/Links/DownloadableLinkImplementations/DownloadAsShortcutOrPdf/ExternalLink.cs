@@ -69,7 +69,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
 
             using (var textWriter = new StreamWriter(filename))
             {
-                var fileContent = CrossPlatformShortcutFileHelper.FromTitleAndUrl(Title, ExternalUrl);
+                var fileContent = ShortcutFileHelper.FromTitleAndUrl(Title, ExternalUrl);
                 await textWriter.WriteAsync(fileContent);
 
                 progressEventArgs = new HttpProgressEventArgs(100, null, fileContent.Length, fileContent.Length);
@@ -88,7 +88,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
                 
                 FileFromCourses.FileNameOnly = Name;
                 FileFromUrl.FileNameOnly = Title;
-                FileFromCourses.FileExtensionOnly = FileFromUrl.FileExtensionOnly = CrossPlatformShortcutFileHelper.GetExtension();
+                FileFromCourses.FileExtensionOnly = FileFromUrl.FileExtensionOnly = ShortcutFileHelper.GetExtension();
             }
         }
     }
