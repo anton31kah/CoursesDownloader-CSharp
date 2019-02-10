@@ -114,7 +114,7 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
 
                 if (sequence != null)
                 {
-                    page--;
+                    page = page > 0 ? --page : page;
 
                     var matchingLinks = SharedVars.DownloadQueue.Skip(page * pageSize)
                         .Take(pageSize)

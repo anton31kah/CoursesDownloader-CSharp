@@ -68,34 +68,44 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
 
         private byte[] GeneratePdf(string html)
         {
-            byte[] pdfBytes;
-            using (var pdfTools = new PdfTools())
+            var doc = new HtmlToPdfDocument
             {
-                var converter = new BasicConverter(pdfTools);
-
-                var doc = new HtmlToPdfDocument
+                GlobalSettings =
                 {
-                    GlobalSettings =
+                    ColorMode = ColorMode.Color,
+                    Orientation = Orientation.Portrait,
+                    PaperSize = PaperKind.A4
+                },
+                Objects =
+                {
+                    new ObjectSettings
                     {
-                        ColorMode = ColorMode.Color,
-                        Orientation = Orientation.Portrait,
-                        PaperSize = PaperKind.A4
-                    },
-                    Objects =
-                    {
-                        new ObjectSettings
-                        {
-                            PagesCount = true,
-                            HtmlContent = html,
-                            WebSettings = {DefaultEncoding = "utf-8"}
-                        }
+                        PagesCount = true,
+                        HtmlContent = html,
+                        WebSettings = {DefaultEncoding = "utf-8"}
                     }
-                };
+                }
+            };
 
-                pdfBytes = converter.Convert(doc);
-            }
+            var pdfBytes = PdfConvertorSingleton.Instance.Converter.Convert(doc);
 
             return pdfBytes;
+        }
+
+        private sealed class PdfConvertorSingleton
+        {
+            static PdfConvertorSingleton()
+            {
+            }
+
+            private PdfConvertorSingleton()
+            {
+                Converter = new SynchronizedConverter(new PdfTools());
+            }
+
+            public static PdfConvertorSingleton Instance { get; } = new PdfConvertorSingleton();
+
+            public SynchronizedConverter Converter { get; }
         }
 
         private void ReportProgress(double done, double max)

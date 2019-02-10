@@ -4,6 +4,7 @@
     {
         Course,
         Section,
-        Link
+        Link,
+        NamingMethod // BAD, ignored
     }
 }

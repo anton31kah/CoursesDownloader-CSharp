@@ -12,4 +12,8 @@
     <ProjectReference Include="..\CoursesDownloader.Models\CoursesDownloader.Models.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y &quot;$(SolutionDir)wkhtmltopdfdlls\*.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;" />
+  </Target>
+
 </Project>

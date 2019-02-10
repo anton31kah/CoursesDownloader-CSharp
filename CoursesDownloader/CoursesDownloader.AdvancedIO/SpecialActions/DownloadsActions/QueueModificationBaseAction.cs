@@ -67,8 +67,8 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
                     MatchingItems = sequence?.Where(i => i < SharedVars.SelectedSection.Count) ??
                                     Enumerable.Range(0, SharedVars.SelectedSection.Count);
                     break;
-                case 4: // ignore
-                    MatchingItemType = ItemTypeToAddRemove.Link;
+                default: // ignore
+                    MatchingItemType = ItemTypeToAddRemove.NamingMethod;
                     MatchingItems = Enumerable.Empty<int>();
                     break;
             }

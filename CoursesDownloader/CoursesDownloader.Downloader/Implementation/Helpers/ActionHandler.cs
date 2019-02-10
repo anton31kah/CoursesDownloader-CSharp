@@ -67,7 +67,7 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
 
         private static void HandleQueueModificationBaseAction(QueueModificationBaseAction action)
         {
-            var matchingLinks = new List<IDownloadableLink>();
+            List<IDownloadableLink> matchingLinks;
 
             switch (action.MatchingItemType)
             {
@@ -89,6 +89,15 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
                         .Where((link, j) => action.MatchingItems.Contains(j))
                         .ToList();
                     break;
+                default:
+                    matchingLinks = Enumerable.Empty<IDownloadableLink>().ToList();
+                    break;
+            }
+
+            if (!matchingLinks.Any())
+            {
+                ConsoleUtils.WriteLine("Unfortunately downloading files using multiple naming methods at once is not possible", ConsoleIOType.Error);
+                return;
             }
 
             do

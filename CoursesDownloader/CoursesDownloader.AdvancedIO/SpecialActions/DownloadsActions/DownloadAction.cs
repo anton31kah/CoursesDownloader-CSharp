@@ -22,7 +22,7 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
 
         public override void SetNextRunningActionType()
         {
-            SharedVars.CurrentRunningActionType = RunningActionType.DownloadSelectedLinks;
+            SharedVars.CurrentRunningActionType = RunningActionType.AskForNamingMethod;
         }
     }
 }
