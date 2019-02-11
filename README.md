@@ -29,7 +29,6 @@ Download latest version from [here](https://github.com/anton31kah/CoursesDownloa
   - **TempUserLogIn**, **TempUserLogOut**: Log in or out as a temp user, the credentials will be deleted safely after log out (or after console close, everything is disposed in whatever situation).
   - **LogOut**: Log out and be prompted to enter credentials again, any stored credentials will be disposed.
   - And more to come.
-- Downloads external links as urls, pages as pdfs, do not miss anything while downloading.
 
 ### Plans for the future:
 - [x] Download external links as
