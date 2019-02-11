@@ -10,6 +10,12 @@ Download latest version from [here](https://github.com/anton31kah/CoursesDownloa
 - Select files to download with patterns.
     - Example: `1-5,7,9,11-15` will download files `1,2,3,4,5,7,9,11,12,13,14,15`.
 - Smart and flexible checks on previously mentioned selections, so if files 14,15 aren't in range, it'll ask whether to ignore them or download something else (entirely or just to replace those out of range).
+- Downloading external links as shortcuts.
+- Downloading pages as pdfs.
+- Organizing files downloaded into folders when downloading from different sections or courses.
+- Allowing two naming methods, either the one you find on courses, or the one extracted from the url.
+  - For normal files or folders, it's the default name used by the browser.
+  - For external links or pages it's the title of the page.
 - Powerful actions like:
   - **Add**: Add anything to the queue, files, sections, even whole courses, using the previous patterns, so yes you can download the whole semester at once.
   - **Remove**: Remove what you added, applies to the same categories, and it doesn't complain whether the items were added.
