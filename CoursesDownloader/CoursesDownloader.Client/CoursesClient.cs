@@ -48,6 +48,7 @@ namespace CoursesDownloader.Client
             {
                 BaseAddress = new Uri("http://courses.finki.ukim.mk/"),
             };
+            SessionClient.DefaultRequestHeaders.UserAgent.ParseAdd("CoursesDownloader-C# Console App");
 
             HttpResponseMessage login = null;
 
