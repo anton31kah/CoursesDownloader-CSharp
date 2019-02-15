@@ -1,4 +1,6 @@
-﻿namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
+﻿using CoursesDownloader.SharedVariables;
+
+namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
 {
     public class CloseAction : BaseAction
     {
@@ -18,6 +20,11 @@
             }
 
             return this;
+        }
+
+        public override void SetNextRunningActionType()
+        {
+            SharedVars.CurrentRunningActionType = RunningActionType.End;
         }
     }
 }

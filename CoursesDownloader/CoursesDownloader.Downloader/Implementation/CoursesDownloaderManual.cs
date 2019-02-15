@@ -157,6 +157,12 @@ namespace CoursesDownloader.Downloader.Implementation
                         break;
                     }
                 }
+
+                if (SharedVars.CurrentRunningActionType == RunningActionType.End)
+                {
+                    Dispose();
+                    break;
+                }
             }
         }
 

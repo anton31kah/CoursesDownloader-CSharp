@@ -7,6 +7,7 @@
         AskForMultipleLinks = 2,
         AskForNamingMethod = 3,
         DownloadSelectedLinks = 4,
-        Repeat = 5
+        Repeat = 5,
+        End = 6
     }
 }

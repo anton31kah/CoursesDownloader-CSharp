@@ -8,7 +8,7 @@ namespace CoursesDownloader.AdvancedIO.ConsoleHelpers
 
         public static string ReadLine(string message = null, ConsoleColor? messageColor = null, ConsoleColor? inputColor = null, bool isPassword = false)
         {
-            Write(message, messageColor);
+            Write(message, messageColor ?? ConsoleColor.Gray);
 
             var colorChanged = ChangeColor(inputColor);
             var input = isPassword ? ReadPassword() : Console.ReadLine();
@@ -20,7 +20,7 @@ namespace CoursesDownloader.AdvancedIO.ConsoleHelpers
 
         public static void WriteLine(string message = null, ConsoleColor? messageColor = null)
         {
-            var colorChanged = ChangeColor(messageColor);
+            var colorChanged = ChangeColor(messageColor ?? ConsoleColor.Gray);
             Console.WriteLine(message);
 
             ResetColors(colorChanged);
