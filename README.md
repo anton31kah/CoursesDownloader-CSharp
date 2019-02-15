@@ -4,7 +4,13 @@
 
 This script is a simple downloader for the website http://courses.finki.ukim.mk/, it provides an automated way to download multiple files, it has some actions, and is constantly expanded, many features will be introduced in the future, but keep in mind that the purpose of this project was to automate the process so it should make it faster and easier and not slower and harder.
 
-Download latest version from [here](https://github.com/anton31kah/CoursesDownloader-CSharp/releases/latest).
+## Usage:
+1. Download latest version from [here](https://github.com/anton31kah/CoursesDownloader-CSharp/releases/latest).
+2. Download the file for your OS.
+    - Note: Linux and MacOs versions are 64-bit versions.
+3. Extract into a folder.
+4. Launch `CoursesDownloader.Downloader` (not the `dll`, but the `exe` for windows and no extensions for macos and linux).
+5. Enjoy.
 
 ### Features:
 - Select files to download with patterns.
