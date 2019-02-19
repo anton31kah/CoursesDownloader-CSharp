@@ -13,5 +13,7 @@
         // TODO 04 multiple downloads
 
         // TODO 05 allow download stop (on close delete files)
+        
+        // TODO 06 have httpUtils have one extension method AutoRedirect which returns object that has same methods but overridden
     }
 }
