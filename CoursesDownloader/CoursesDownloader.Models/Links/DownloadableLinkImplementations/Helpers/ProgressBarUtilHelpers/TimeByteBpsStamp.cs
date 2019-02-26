@@ -15,10 +15,11 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers
             AverageBps = new MovingAverage();
         }
 
-        public void Update(DateTime lastTimeStamp, int lastBytesStamp)
+        public TimeByteBpsStamp Update(DateTime lastTimeStamp, int lastBytesStamp)
         {
             LastTimeStamp = lastTimeStamp;
             LastBytesStamp = lastBytesStamp;
+            return this;
         }
     }
 }

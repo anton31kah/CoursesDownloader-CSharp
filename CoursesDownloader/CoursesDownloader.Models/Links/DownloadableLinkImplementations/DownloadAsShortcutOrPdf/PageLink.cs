@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Net.Http.Handlers;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
 using CoursesDownloader.Client.Helpers;
@@ -38,19 +37,19 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
         {
             await CoursesClient.LazyRefresh();
 
-            ReportProgress(0, 1024);
+            DownloadProgressUpdate(0, 1024);
 
             var html = await ExtractMainHtml();
-            
-            ReportProgress(html.Length / 2.0, html.Length);
+
+            DownloadProgressUpdate(html.Length / 2.0, html.Length);
 
             var pdf = GeneratePdf(html);
 
-            ReportProgress(pdf.Length * 0.9, pdf.Length);
+            DownloadProgressUpdate(pdf.Length * 0.9, pdf.Length);
 
             File.WriteAllBytes(filename, pdf);
 
-            ReportProgress(pdf.Length, pdf.Length);
+            DownloadProgressUpdate(pdf.Length, pdf.Length);
         }
 
         private async Task<string> ExtractMainHtml()
@@ -107,13 +106,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
 
             public SynchronizedConverter Converter { get; }
         }
-
-        private void ReportProgress(double done, double max)
-        {
-            var progressEventArgs = new HttpProgressEventArgs((int) done, null, (long) done, (long?) max);
-            DownloadProgressTracker(this, progressEventArgs);
-        }
-
+        
         public override async Task GetNameFromUrlNow()
         {
             if (!IsTitleExtracted)

@@ -88,15 +88,22 @@ namespace CoursesDownloader.Downloader.Implementation
                     
                     var table = new ConsoleTableUtil("From Courses", "From URL (Default)");
 
+                    var randomNLinksTasks = new List<Task>();
+
                     foreach (var link in randomN)
                     {
-                        await link.GetNameFromUrlNow();
-
-                        table.AddRow(
-                            link.FileFromCourses.FileNameAndExtensionOnly, 
-                            link.FileFromUrl.FileNameAndExtensionOnly
-                            );
+                        randomNLinksTasks.Add(
+                            link.GetNameFromUrlNow()
+                                .ContinueWith(task =>
+                                    table.AddRow(
+                                        link.FileFromCourses.FileNameAndExtensionOnly,
+                                        link.FileFromUrl.FileNameAndExtensionOnly
+                                    )
+                                )
+                        );
                     }
+
+                    await Task.WhenAll(randomNLinksTasks);
 
                     var examples = $"Some examples:\n\n{table}";
 
@@ -173,22 +180,35 @@ namespace CoursesDownloader.Downloader.Implementation
             Console.Clear();
 
             ProgressBarUtil.InitMainProgressBar(totalLen);
-
-            var i = 1;
-
+            
             var extraPathPerLink = ExtraPathsHelper.FillExtraPaths();
 
+            var downloadBatch = new List<Task>();
+            
+            const int batch = 5;
+            var started = 0;
+
+            // solution provided from here https://stackoverflow.com/a/54894420/6877477
             foreach (var link in SharedVars.DownloadQueue)
             {
                 extraPathPerLink.TryGetValue(link, out var middlePath);
 
-                ProgressBarUtil.InitFileProgressBar(link);
-                ProgressBarUtil.TickMain($"Downloading... {i} / {totalLen}");
-                await link.Download(middlePath);
-                i++;
+                var task = TriggerDownloadFile(link, middlePath, ++started, totalLen);
+                downloadBatch.Add(task);
+
+                if (downloadBatch.Count == batch)
+                {
+                    // Wait for any Task to complete, then remove it from the list of pending tasks.
+                    var completedTask = await Task.WhenAny(downloadBatch);
+                    downloadBatch.Remove(completedTask);
+                }
             }
 
-            ProgressBarUtil.TickMain($"Downloaded all {i} / {totalLen}");
+            // Wait for all of the remaining Tasks to complete
+            await Task.WhenAll(downloadBatch);
+
+            
+            ProgressBarUtil.TickMain($"Downloaded all {totalLen} / {totalLen}");
 
             ProgressBarUtil.Dispose();
 
@@ -204,6 +224,13 @@ namespace CoursesDownloader.Downloader.Implementation
 
 
             Console.WriteLine();
+        }
+        
+        private static async Task TriggerDownloadFile(IDownloadableLink link, string[] middlePath, int started, int totalLen)
+        {
+            ProgressBarUtil.InitFileProgressBar(link);
+            ProgressBarUtil.TickMain($"Downloading... {started} / {totalLen}");
+            await link.Download(middlePath);
         }
         
         public static void Dispose()

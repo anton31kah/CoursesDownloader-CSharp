@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Net.Http.Handlers;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
 using CoursesDownloader.Client.Helpers;
@@ -63,17 +62,14 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
         
         protected override async Task GetAndSaveFile(string filename)
         {
-            var progressEventArgs = new HttpProgressEventArgs(0, null, 0, ExternalUrl.Length);
-
-            DownloadProgressTracker(this, progressEventArgs);
+            DownloadProgressUpdate(0, ExternalUrl.Length);
 
             using (var textWriter = new StreamWriter(filename))
             {
                 var fileContent = ShortcutFileHelper.FromTitleAndUrl(Title, ExternalUrl);
                 await textWriter.WriteAsync(fileContent);
-
-                progressEventArgs = new HttpProgressEventArgs(100, null, fileContent.Length, fileContent.Length);
-                DownloadProgressTracker(this, progressEventArgs);
+                
+                DownloadProgressUpdate(fileContent.Length, fileContent.Length);
             }
         }
         

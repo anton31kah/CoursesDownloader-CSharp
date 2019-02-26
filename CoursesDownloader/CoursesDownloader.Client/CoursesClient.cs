@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Handlers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CoursesDownloader.AdvancedIO;
@@ -20,21 +19,9 @@ namespace CoursesDownloader.Client
         private static string CASTarget { get; set; } = DefaultCASTarget;
         private static string TempCASTarget;
 
-        private static ProgressMessageHandler _downloadProgressTrackingHandler;
-
         private static DateTime LoginTime { get; set; }
         public static HttpClient SessionClient { get; private set; }
         
-        public static void AddEvent(EventHandler<HttpProgressEventArgs> downloadProgressEvent)
-        {
-            _downloadProgressTrackingHandler.HttpReceiveProgress += downloadProgressEvent;
-        }
-
-        public static void RemoveEvent(EventHandler<HttpProgressEventArgs> downloadProgressEvent)
-        {
-            _downloadProgressTrackingHandler.HttpReceiveProgress -= downloadProgressEvent;
-        }
-
         private static async Task CreateSession()
         {
             var httpClientHandler = new HttpClientHandler
@@ -42,9 +29,7 @@ namespace CoursesDownloader.Client
                 AllowAutoRedirect = false
             };
 
-            _downloadProgressTrackingHandler = new ProgressMessageHandler(httpClientHandler);
-
-            SessionClient = new HttpClient(_downloadProgressTrackingHandler)
+            SessionClient = new HttpClient(httpClientHandler)
             {
                 BaseAddress = new Uri("http://courses.finki.ukim.mk/"),
             };
@@ -201,7 +186,6 @@ namespace CoursesDownloader.Client
             }
 
             CASTarget = DefaultCASTarget;
-            _downloadProgressTrackingHandler.Dispose();
             SessionClient.Dispose();
         }
     }

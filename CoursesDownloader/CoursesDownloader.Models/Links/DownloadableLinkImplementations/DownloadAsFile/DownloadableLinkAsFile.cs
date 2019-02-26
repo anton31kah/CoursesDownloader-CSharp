@@ -19,9 +19,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
         protected override async Task GetAndSaveFile(string filename)
         {
             await CoursesClient.LazyRefresh();
-
-            CoursesClient.AddEvent(DownloadProgressTracker);
-
+            
             // we request headers because otherwise the file is first put into memory so we lose the whole point of streams
             // since we are using ReadAsStreamAsync, nothing is loaded into memory
             // although we can't use HeadersResponse from previously because that way we can't track progress
@@ -31,13 +29,32 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
                 {
                     using (var content = await file.Content.ReadAsStreamAsync())
                     {
-                        await content.CopyToAsync(fileStream);
-                        await fileStream.FlushAsync();
+                        int totalLength = (int) file.Content.Headers.ContentLength;
+                        var totalBytesRead = 0;
+                        var buffer = new byte[8192];
+                        var isMoreToRead = true;
+
+                        do
+                        {
+                            var currentRead = await content.ReadAsync(buffer, 0, buffer.Length);
+                            if (currentRead == 0)
+                            {
+                                isMoreToRead = false;
+                                DownloadProgressUpdate(totalBytesRead, totalLength);
+
+                                await fileStream.FlushAsync();
+                                continue;
+                            }
+
+                            await fileStream.WriteAsync(buffer, 0, currentRead);
+
+                            totalBytesRead += currentRead;
+                            DownloadProgressUpdate(totalBytesRead, totalLength);
+
+                        } while (isMoreToRead);
                     }
                 }
             }
-
-            CoursesClient.RemoveEvent(DownloadProgressTracker);
         }
         
         public override async Task GetNameFromUrlNow()

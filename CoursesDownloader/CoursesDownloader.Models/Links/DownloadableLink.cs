@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Net.Http.Handlers;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
 using CoursesDownloader.IModels;
@@ -61,12 +60,12 @@ namespace CoursesDownloader.Models.Links
         }
 
         protected abstract Task GetAndSaveFile(string filename);
-
-        protected void DownloadProgressTracker(object sender, HttpProgressEventArgs e)
+        
+        protected void DownloadProgressUpdate(double bytesTransferred, double bytesTotal)
         {
-            ProgressBarUtil.TickFile(this, e);
+            ProgressBarUtil.TickFile(this, bytesTransferred, bytesTotal);
         }
-
+        
         public abstract Task GetNameFromUrlNow();
     }
 }
