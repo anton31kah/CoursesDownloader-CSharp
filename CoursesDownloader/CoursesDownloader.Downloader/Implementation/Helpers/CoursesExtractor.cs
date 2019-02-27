@@ -58,12 +58,9 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
                     var longName = ExtractName(l);
                     var url = ExtractHref(l);
 
-                    string shortName;
-                    using (var courseHtml = await CoursesClient.SessionClient.GetStreamAsync(url))
-                    {
-                        shortName = LazyHtmlParser.FindShortNameInHtml(courseHtml);
-                        shortName = CleanName(shortName, true);
-                    }
+                    var courseHtml = await CoursesClient.SessionClient.GetStringAsync(url);
+                    var shortName = LazyHtmlParser.FindShortNameInHtml(courseHtml);
+                    shortName = CleanName(shortName, true);
 
                     return new CourseLink($"{shortName,-8}{longName}", url);
                 });

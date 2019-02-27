@@ -23,14 +23,12 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
         private async Task ExtractExternalUrlAndTitle()
         {
             await CoursesClient.LazyRefresh();
-            
-            using (var html = await CoursesClient.SessionClient.GetStreamAsync(Url))
-            {
-                var title = LazyHtmlParser.FindTitleInHtml(html);
-                Title = title;
 
-                IsTitleExtracted = true;
-            }
+            var html = await CoursesClient.SessionClient.GetStringAsync(Url);
+            var title = LazyHtmlParser.FindTitleInHtml(html);
+            Title = title;
+
+            IsTitleExtracted = true;
         }
         
         protected override async Task GetAndSaveFile(string filename)

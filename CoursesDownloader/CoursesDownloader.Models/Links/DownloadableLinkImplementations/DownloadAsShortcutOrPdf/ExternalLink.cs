@@ -12,7 +12,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
     public class ExternalLink : DownloadableLink, IExternalLink
     {
         private bool AreExternalUrlAndTitleExtracted { get; set; }
-        private static string ExternalUrl { get; set; }
+        private string ExternalUrl { get; set; }
         private string Title { get; set; }
 
         public ExternalLink(string name = "", string url = "", ISection parentSection = null) : base(name, url, parentSection)
@@ -27,18 +27,16 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
             using (var coursesResponse = await CoursesClient.SessionClient.GetHeadersAsync(Url))
             {
                 var externalResponse = coursesResponse;
-
+            
                 // if redirected to courses, grab url workaround, get title from there
                 if (coursesResponse.RequestMessage.RequestUri.Host == CoursesClient.SessionClient.BaseAddress.Host)
                 {
-                    using (var coursesHtml = await coursesResponse.Content.ReadAsStreamAsync())
-                    {
-                        var urlWorkaround = LazyHtmlParser.FindUrlWorkaroundInHtml(coursesHtml);
-                        ExternalUrl = urlWorkaround;
+                    var coursesHtml = await coursesResponse.Content.ReadAsStringAsync();
+                    var urlWorkaround = LazyHtmlParser.FindUrlWorkaroundInHtml(coursesHtml);
+                    ExternalUrl = urlWorkaround;
 
-                        // Go to url as clicked on workaround url
-                        externalResponse = await CoursesClient.SessionClient.GetHeadersAsync(urlWorkaround);
-                    }
+                    // Go to url as clicked on workaround url
+                    externalResponse = await CoursesClient.SessionClient.GetHeadersAsync(urlWorkaround);
                 }
                 // else redirected to external link, just save it
                 else
@@ -49,13 +47,11 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
 
                 using (externalResponse)
                 {
-                    using (var externalHtml = await externalResponse.Content.ReadAsStreamAsync())
-                    {
-                        var title = LazyHtmlParser.FindTitleInHtml(externalHtml);
-                        Title = title;
+                    var externalHtml = await externalResponse.Content.ReadAsStringAsync();
+                    var title = LazyHtmlParser.FindTitleInHtml(externalHtml);
+                    Title = title;
 
-                        AreExternalUrlAndTitleExtracted = true;
-                    }
+                    AreExternalUrlAndTitleExtracted = true;
                 }
             }
         }
