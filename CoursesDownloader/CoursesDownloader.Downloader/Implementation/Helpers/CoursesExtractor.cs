@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
-using CoursesDownloader.Client.Helpers;
+using CoursesDownloader.Client.Helpers.HttpClientAutoRedirect;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels.ILinks;
 using CoursesDownloader.Models.Links;
@@ -45,7 +45,7 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
         public static async Task<List<ICourseLink>> ExtractCourses()
         {
             await CoursesClient.LazyRefresh();
-            var coursesPageText = await CoursesClient.SessionClient.GetStringAsyncHttp(CoursesProfileAllCoursesUrl);
+            var coursesPageText = await CoursesClient.SessionClient.GetStringAsync(CoursesProfileAllCoursesUrl);
             CoursesClient.FindSessKey(coursesPageText);
             var doc = new HtmlDocument();
             doc.LoadHtml(coursesPageText);
@@ -59,7 +59,7 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
                     var url = ExtractHref(l);
 
                     string shortName;
-                    using (var courseHtml = await CoursesClient.SessionClient.GetStreamAsyncHttp(url))
+                    using (var courseHtml = await CoursesClient.SessionClient.GetStreamAsync(url))
                     {
                         shortName = LazyHtmlParser.FindShortNameInHtml(courseHtml);
                         shortName = CleanName(shortName, true);
@@ -78,7 +78,7 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
         public static async Task<int> ExtractSemestersCount()
         {
             await CoursesClient.LazyRefresh();
-            var profileHtml = await CoursesClient.SessionClient.GetStringAsyncHttp(CoursesProfileAllCoursesUrl);
+            var profileHtml = await CoursesClient.SessionClient.GetStringAsync(CoursesProfileAllCoursesUrl);
             var doc = new HtmlDocument();
             doc.LoadHtml(profileHtml);
             var coursesLinks = doc.DocumentNode.SelectNodes(XPathFilterProfileCoursesLinks);

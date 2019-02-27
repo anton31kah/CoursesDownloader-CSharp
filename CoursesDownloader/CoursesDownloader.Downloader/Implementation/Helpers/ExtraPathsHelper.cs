@@ -74,7 +74,7 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
             }
         }
 
-        private static void AdjustExtraPaths(IEnumerable<IDownloadableLink> filteredLinks, string courseDirName = null, string sectionDirName = null)
+        private static void AdjustExtraPaths(IEnumerable<IDownloadableLink> filteredLinks, string courseDirName, string sectionDirName)
         {
             foreach (var link in filteredLinks)
             {

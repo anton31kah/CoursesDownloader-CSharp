@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
-using CoursesDownloader.Client.Helpers;
+using CoursesDownloader.Client.Helpers.HttpClientAutoRedirect;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsShortcut;
@@ -24,7 +24,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
         {
             await CoursesClient.LazyRefresh();
             
-            using (var html = await CoursesClient.SessionClient.GetStreamAsyncHttp(Url))
+            using (var html = await CoursesClient.SessionClient.GetStreamAsync(Url))
             {
                 var title = LazyHtmlParser.FindTitleInHtml(html);
                 Title = title;
@@ -54,7 +54,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
 
         private async Task<string> ExtractMainHtml()
         {
-            var html = await CoursesClient.SessionClient.GetStringAsyncHttp(Url);
+            var html = await CoursesClient.SessionClient.GetStringAsync(Url);
 
             var doc = new HtmlDocument();
             doc.LoadHtml(html);

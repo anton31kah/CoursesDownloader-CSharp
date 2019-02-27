@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
-using CoursesDownloader.Client.Helpers;
+using CoursesDownloader.Client.Helpers.HttpClientAutoRedirect;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsFile;
@@ -23,7 +23,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
             // we request headers because otherwise the file is first put into memory so we lose the whole point of streams
             // since we are using ReadAsStreamAsync, nothing is loaded into memory
             // although we can't use HeadersResponse from previously because that way we can't track progress
-            using (var file = await CoursesClient.SessionClient.GetHeadersAsyncHttp(DownloadUrl))
+            using (var file = await CoursesClient.SessionClient.GetHeadersAsync(DownloadUrl))
             {
                 using (var fileStream = File.Create(filename))
                 {
@@ -64,7 +64,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
                 IsNameFromUrlExtracted = true;
                 string fileName;
 
-                using (var headersResponseResult = await CoursesClient.SessionClient.GetHeadersAsyncHttp(DownloadUrl))
+                using (var headersResponseResult = await CoursesClient.SessionClient.GetHeadersAsync(DownloadUrl))
                 {
                     fileName = headersResponseResult.Content.Headers.ContentDisposition.FileName
                         .DecodeUtf8()

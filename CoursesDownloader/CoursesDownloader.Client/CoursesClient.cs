@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CoursesDownloader.AdvancedIO;
 using CoursesDownloader.AdvancedIO.ConsoleHelpers;
 using CoursesDownloader.Client.Helpers;
+using CoursesDownloader.Client.Helpers.HttpClientAutoRedirect;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.SharedVariables;
 using HtmlAgilityPack;
@@ -20,7 +21,7 @@ namespace CoursesDownloader.Client
         private static string TempCASTarget;
 
         private static DateTime LoginTime { get; set; }
-        public static HttpClient SessionClient { get; private set; }
+        public static HttpClientAutoRedirect SessionClient { get; private set; }
         
         private static async Task CreateSession()
         {
@@ -29,7 +30,7 @@ namespace CoursesDownloader.Client
                 AllowAutoRedirect = false
             };
 
-            SessionClient = new HttpClient(httpClientHandler)
+            SessionClient = new HttpClientAutoRedirect(httpClientHandler)
             {
                 BaseAddress = new Uri("http://courses.finki.ukim.mk/"),
             };
@@ -43,7 +44,7 @@ namespace CoursesDownloader.Client
 
                 try
                 {
-                    login = await SessionClient.GetAsyncHttp("http://courses.finki.ukim.mk/login/index.php");
+                    login = await SessionClient.GetAsync("http://courses.finki.ukim.mk/login/index.php");
 
                     if (!login.IsSuccessStatusCode)
                     {
@@ -102,7 +103,7 @@ namespace CoursesDownloader.Client
             {
                 Console.WriteLine("Logging into CAS");
                 
-                using (var response = await SessionClient.PostAsyncHttp(login.RequestMessage.RequestUri, loginDataContent))
+                using (var response = await SessionClient.PostAsync(login.RequestMessage.RequestUri, loginDataContent))
                 {
                     // if redirected to CAS, wrong password or username
                     if (response.RequestMessage.RequestUri.Host == new Uri(CASTarget).Host)
@@ -141,13 +142,13 @@ namespace CoursesDownloader.Client
             }
         }
 
-        public static async Task<HttpClient> LazyRefresh()
+        public static async Task<HttpClientAutoRedirect> LazyRefresh()
         {
             await Init();
             return SessionClient;
         }
 
-        public static async Task<HttpClient> TempLogInUser()
+        public static async Task<HttpClientAutoRedirect> TempLogInUser()
         {
             // a temp user is logged in, log them out first
             if (TempCASTarget != null && CASTarget == TempCASTarget)

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using CoursesDownloader.Client;
-using CoursesDownloader.Client.Helpers;
+using CoursesDownloader.Client.Helpers.HttpClientAutoRedirect;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsShortcut;
@@ -24,7 +24,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
             await CoursesClient.LazyRefresh();
 
             // Go to url as clicked on courses
-            using (var coursesResponse = await CoursesClient.SessionClient.GetHeadersAsyncHttp(Url))
+            using (var coursesResponse = await CoursesClient.SessionClient.GetHeadersAsync(Url))
             {
                 var externalResponse = coursesResponse;
 
@@ -37,7 +37,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
                         ExternalUrl = urlWorkaround;
 
                         // Go to url as clicked on workaround url
-                        externalResponse = await CoursesClient.SessionClient.GetHeadersAsyncHttp(urlWorkaround);
+                        externalResponse = await CoursesClient.SessionClient.GetHeadersAsync(urlWorkaround);
                     }
                 }
                 // else redirected to external link, just save it
