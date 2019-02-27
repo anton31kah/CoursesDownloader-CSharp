@@ -108,7 +108,7 @@ namespace CoursesDownloader.Client.Helpers
 
         private static void SaveCredentials(IEnumerable<Credential> credentials)
         {
-            using (var fileStream = File.Open(CredentialsPath, FileMode.OpenOrCreate, FileAccess.Write))
+            using (var fileStream = File.Open(CredentialsPath, FileMode.Create, FileAccess.Write))
             {
                 using (var streamWriter = new StreamWriter(fileStream))
                 {
@@ -229,5 +229,26 @@ namespace CoursesDownloader.Client.Helpers
         }
 
         #endregion
+
+        public static bool ClearCredentialsKeep(string targetToKeep)
+        {
+            var credentials = GetAllCredentials();
+
+            // if undefined, keep only first line
+            if (targetToKeep == null)
+            {
+                var returnValue = credentials.Count != 1;
+
+                credentials.RemoveRange(1, credentials.Count - 1);
+                SaveCredentials(credentials);
+
+                return returnValue;
+            }
+
+            var removedCount = credentials.RemoveAll(cred => cred.Target != targetToKeep);
+            SaveCredentials(credentials);
+
+            return removedCount > 0;
+        }
     }
 }

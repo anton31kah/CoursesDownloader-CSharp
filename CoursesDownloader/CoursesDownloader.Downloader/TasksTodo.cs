@@ -4,7 +4,7 @@
     {
         // TODO 00 CHECK TODO TASK LIST (CTRL+\, T) (AND SORT BY DESCRIPTION)
 
-        // TODO 01 delete second line in creds file all the time (check for it on start, whenever possible) // try not storing it all
+        // TO/DO 01 delete second line in creds file all the time (check for it on start, whenever possible) // try not storing it all
 
         // TODO 02 logging
 
