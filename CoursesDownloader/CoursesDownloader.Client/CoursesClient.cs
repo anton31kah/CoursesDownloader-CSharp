@@ -25,7 +25,10 @@ namespace CoursesDownloader.Client
         
         private static async Task CreateSession()
         {
-            CredentialUtil.ClearCredentialsKeep(CASTarget);
+            if (TempCASTarget == null)
+            {
+                CredentialUtil.ClearCredentialsKeep(DefaultCASTarget);
+            }
 
             var httpClientHandler = new HttpClientHandler
             {
@@ -176,7 +179,7 @@ namespace CoursesDownloader.Client
             TempCASTarget = null;
             CASTarget = DefaultCASTarget;
             
-            CredentialUtil.ClearCredentialsKeep(CASTarget);
+            CredentialUtil.ClearCredentialsKeep(DefaultCASTarget);
 
             SessionClient.Dispose();
         }
@@ -192,7 +195,7 @@ namespace CoursesDownloader.Client
             
             CASTarget = DefaultCASTarget;
 
-            CredentialUtil.ClearCredentialsKeep(CASTarget);
+            CredentialUtil.ClearCredentialsKeep(DefaultCASTarget);
 
             SessionClient.Dispose();
         }
