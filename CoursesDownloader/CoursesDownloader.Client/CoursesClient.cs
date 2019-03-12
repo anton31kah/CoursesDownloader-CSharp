@@ -45,7 +45,7 @@ namespace CoursesDownloader.Client
 
             while (true)
             {
-                Console.WriteLine("Establishing connection with courses");
+                ConsoleUtils.WriteLine("Establishing connection with courses");
 
                 try
                 {
@@ -58,9 +58,9 @@ namespace CoursesDownloader.Client
                 }
                 catch (HttpRequestException)
                 {
-                    Console.WriteLine("Connection cannot be established");
+                    ConsoleUtils.WriteLine("Connection cannot be established");
                     var shouldRetry = MenuChooseItem.AskYesNoQuestion("Do you want to try again? [Y/N] ",
-                        Console.Clear, 
+                        ConsoleUtils.Clear, 
                         () => { Environment.Exit(0); });
 
                     if (shouldRetry) // onYes
@@ -72,7 +72,7 @@ namespace CoursesDownloader.Client
                 break;
             }
 
-            Console.WriteLine("Preparing CAS login");
+            ConsoleUtils.WriteLine("Preparing CAS login");
 
             var text = await login.Content.ReadAsStringAsync();
             login.Dispose();
@@ -93,20 +93,25 @@ namespace CoursesDownloader.Client
 
             var (username, password) = CredentialUtil.GetCredential(CASTarget);
 
-            while (username.IsNullOrEmpty() || password.IsNullOrEmpty())
+            while (username.IsNullOrEmpty())
             {
                 username = ConsoleUtils.ReadLine("Please enter your CAS username >>> ", ConsoleIOType.Question);
-                password = ConsoleUtils.ReadLine("Please enter your CAS password >>> ", ConsoleIOType.Question, true);
-                
-                CredentialUtil.SetCredentials(CASTarget, username, password);
+                // if (username == null) throw new NullReferenceException("Console.ReadLine returned null, input stream reached an end");
             }
+
+            while (password.IsNullOrEmpty())
+            {
+                password = ConsoleUtils.ReadLine("Please enter your CAS password >>> ", ConsoleIOType.Question, true);
+            }
+
+            CredentialUtil.SetCredentials(CASTarget, username, password);
 
             loginData["username"] = username;
             loginData["password"] = password;
 
             using (var loginDataContent = new FormUrlEncodedContent(loginData.ToArray()))
             {
-                Console.WriteLine("Logging into CAS");
+                ConsoleUtils.WriteLine("Logging into CAS");
                 
                 using (var response = await SessionClient.PostAsync(login.RequestMessage.RequestUri, loginDataContent))
                 {

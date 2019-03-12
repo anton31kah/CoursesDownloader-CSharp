@@ -62,6 +62,17 @@ namespace CoursesDownloader.Common.ExtensionMethods
             return WebUtility.HtmlDecode(text);
         }
 
+        public static string DecodeUrl(this string url)
+        {
+            string newUrl;
+            while ((newUrl = Uri.UnescapeDataString(url)) != url)
+            {
+                url = newUrl;
+            }
+
+            return newUrl;
+        }
+
         public static string EscapeQuotes(this string text)
         {
             return text.Replace("\"", "");

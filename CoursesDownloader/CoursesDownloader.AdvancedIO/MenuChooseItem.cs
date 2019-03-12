@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CoursesDownloader.AdvancedIO.ConsoleHelpers;
 using CoursesDownloader.AdvancedIO.SpecialActions;
+using CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.SharedVariables;
 
@@ -16,7 +17,7 @@ namespace CoursesDownloader.AdvancedIO
         {
             if (withClear)
             {
-                Console.Clear();
+                ConsoleUtils.Clear();
             }
 
             if (!insideCall && breadcrumbs)
@@ -56,6 +57,11 @@ namespace CoursesDownloader.AdvancedIO
             while (!selectedItemIsValid)
             {
                 var chosenItem = ConsoleUtils.ReadLine($"And the {itemWord} that you selected is >>> ", ConsoleIOType.Question);
+
+                if (chosenItem == null)
+                {
+                    throw new ExitAction();
+                }
 
                 var action = HandleAction(chosenItem);
                 if (action.State == ActionState.FoundAndHandled)
@@ -98,7 +104,7 @@ namespace CoursesDownloader.AdvancedIO
         public static IEnumerable<T> AskInputForMultipleItemsFromList<T>(IList<T> itemsList, string itemsWord,
             string actionWord = "download")
         {
-            Console.Clear();
+            ConsoleUtils.Clear();
 
             foreach (var prevItem in SharedVars.ChosenItemsTillNow.Values)
             {
@@ -133,6 +139,11 @@ namespace CoursesDownloader.AdvancedIO
             while (!selectedItemIsValid)
             {
                 var itemsIdx = ConsoleUtils.ReadLine($"And the {itemsWord} that you selected are >>> ", ConsoleIOType.Question);
+
+                if (itemsIdx == null)
+                {
+                    throw new ExitAction();
+                }
 
                 var action = HandleAction(itemsIdx);
                 if (action.State == ActionState.FoundAndHandled)
@@ -231,7 +242,9 @@ namespace CoursesDownloader.AdvancedIO
             var confirmationIsValid = false;
             while (!confirmationIsValid)
             {
-                var confirmation = ConsoleUtils.ReadLine(confirmMessage, ConsoleIOType.YesNoQuestion);
+                var confirmation = ConsoleUtils.ReadLine(confirmMessage, ConsoleIOType.YesNoQuestion) 
+//                                   ?? throw new NullReferenceException("Console.ReadLine returned null, input stream reached an end");
+                                   ?? "no";
                 var fullInputString = confirmation;
                 confirmation = confirmation.IsNotEmpty() ? confirmation[0].ToString().ToLower() : "";
 

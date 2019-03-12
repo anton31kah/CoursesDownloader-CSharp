@@ -29,7 +29,7 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
                 {
                     using (var content = await file.Content.ReadAsStreamAsync())
                     {
-                        int totalLength = (int) file.Content.Headers.ContentLength;
+                        var totalLength = (int) file.Content.Headers.ContentLength;
                         var totalBytesRead = 0;
                         var buffer = new byte[8192];
                         var isMoreToRead = true;
@@ -66,9 +66,13 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
 
                 using (var headersResponseResult = await CoursesClient.SessionClient.GetHeadersAsync(DownloadUrl))
                 {
-                    fileName = headersResponseResult.Content.Headers.ContentDisposition.FileName
-                        .DecodeUtf8()
-                        .EscapeQuotes();
+                    fileName = headersResponseResult.Content.Headers.ContentDisposition?.FileName
+                                   .DecodeUtf8()
+                                   .EscapeQuotes()
+                               ??
+                               Path.GetFileName(headersResponseResult.RequestMessage.RequestUri.ToString())
+                                   .DecodeUrl();
+
                     FileSize = headersResponseResult.Content.Headers.ContentLength ?? 0;
                 }
 

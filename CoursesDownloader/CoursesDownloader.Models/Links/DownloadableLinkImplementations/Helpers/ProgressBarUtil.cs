@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using ByteSizeLib;
+using CoursesDownloader.AdvancedIO.ConsoleHelpers;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels.ILinks;
 using CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers.ProgressBarUtilHelpers;
@@ -36,12 +37,16 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers
 
         public static void InitMainProgressBar(int totalItems, string message = null)
         {
+            if (ConsoleUtils.IsMockConsole) return;
+
             message = message.IfIsNullOrEmpty($"Downloading... 0 / {totalItems}");
             _parentProgressBar = new ProgressBar(totalItems, message, ParentProgressBarOptions);
         }
 
         public static void InitFileProgressBar(IDownloadableLink link)
         {
+            if (ConsoleUtils.IsMockConsole) return;
+
             var childProgressBar = _parentProgressBar.Spawn((int) link.FileSize, $"Starting to download {link.Name}...", ChildProgressBarOptions);
             ChildrenProgressBars[link] = childProgressBar;
             TimeByteBpsStamps.TryAdd(link, new TimeByteBpsStamp(DateTime.MinValue));
@@ -49,11 +54,15 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers
 
         public static void TickMain(string message)
         {
+            if (ConsoleUtils.IsMockConsole) return;
+
             _parentProgressBar.Tick(message);
         }
         
         public static void TickFile(DownloadableLink link, double bytesTransferred, double bytesTotal)
         {
+            if (ConsoleUtils.IsMockConsole) return;
+
             var childProgressBar = ChildrenProgressBars[link];
 
             childProgressBar.MaxTicks = (int)bytesTotal;
@@ -76,6 +85,8 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers
         
         public static void Dispose()
         {
+            if (ConsoleUtils.IsMockConsole) return;
+
             foreach (var childProgressBar in ChildrenProgressBars.Values)
             {
                 childProgressBar.Dispose();

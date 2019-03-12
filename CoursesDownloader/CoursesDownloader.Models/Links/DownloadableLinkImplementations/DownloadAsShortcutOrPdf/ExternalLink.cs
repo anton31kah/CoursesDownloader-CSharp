@@ -5,6 +5,7 @@ using CoursesDownloader.Client.Helpers.HttpClientAutoRedirect;
 using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsShortcut;
+using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsFile;
 using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers;
 
 namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf
@@ -47,6 +48,11 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Downloa
 
                 using (externalResponse)
                 {
+                    if (externalResponse.Content.Headers.ContentType.MediaType != "text/html")
+                    {
+                        throw new ExternalUrlIsFileException(this, new FileLink(Name, ExternalUrl, ParentSection));
+                    }
+
                     var externalHtml = await externalResponse.Content.ReadAsStringAsync();
                     var title = LazyHtmlParser.FindTitleInHtml(externalHtml);
                     Title = title;

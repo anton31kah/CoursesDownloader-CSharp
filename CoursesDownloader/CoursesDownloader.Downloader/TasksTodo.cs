@@ -20,6 +20,10 @@
 
         // TO/DO 08 smart html look up? well ignore it and do normal look up with html agility pack, don't save time, have correct performance
 
-        // TODO 09 unit testing console https://stackoverflow.com/a/10181594/6877477 have Console be decided by IsMock in ConsoleUtils (if mock, provide input stream)
+        // TO/DO 09 unit testing console https://stackoverflow.com/a/10181594/6877477 have Console be decided by IsMock in ConsoleUtils (if mock, provide input stream)
+
+        // TODO 10 openfolder action
+
+        // TO/DO 11 if external url is not text/html (content-type) then download as file
     }
 }

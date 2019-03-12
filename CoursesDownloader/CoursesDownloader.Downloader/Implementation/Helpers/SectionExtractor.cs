@@ -115,7 +115,7 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
 
             if (linkUrl.Contains("folder"))
             {
-                return ItemType.Page;
+                return ItemType.Folder;
             }
 
             if (linkUrl.Contains("url"))

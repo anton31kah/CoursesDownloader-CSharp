@@ -11,6 +11,8 @@ using CoursesDownloader.Common.ExtensionMethods;
 using CoursesDownloader.Downloader.Implementation.Helpers;
 using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks;
+using CoursesDownloader.IModels.ILinks.IDownloadableLinkImplementations.IDownloadAsShortcut;
+using CoursesDownloader.Models.Links.DownloadableLinkImplementations.DownloadAsShortcutOrPdf.Helpers;
 using CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers;
 using CoursesDownloader.SharedVariables;
 
@@ -20,7 +22,7 @@ namespace CoursesDownloader.Downloader.Implementation
     {
         public static async Task Init()
         {
-            Console.OutputEncoding = Encoding.UTF8;
+            ConsoleUtils.OutputEncoding = Encoding.UTF8;
 
             await CoursesClient.LazyRefresh();
 
@@ -84,7 +86,9 @@ namespace CoursesDownloader.Downloader.Implementation
                     SharedVars.ChosenItemsTillNow.Remove(SharedVars.ChosenItemsTillNow.Keys.Last());
 
                     choicesPossible.Remove(examplesChoice);
-                    var randomN = SharedVars.DownloadQueue.TakeRandomN(5);
+                    var randomN = SharedVars.DownloadQueue.TakeRandomN(5).ToList();
+
+                    await HandleExternalLinksThatAreFiles(randomN);
                     
                     var table = new ConsoleTableUtil("From Courses", "From URL (Default)");
 
@@ -175,9 +179,11 @@ namespace CoursesDownloader.Downloader.Implementation
 
         private static async Task DownloadSelectedLinks()
         {
+            await HandleExternalLinksThatAreFiles();
+
             var totalLen = SharedVars.DownloadQueue.Count;
 
-            Console.Clear();
+            ConsoleUtils.Clear();
 
             ProgressBarUtil.InitMainProgressBar(totalLen);
             
@@ -212,9 +218,9 @@ namespace CoursesDownloader.Downloader.Implementation
 
             ProgressBarUtil.Dispose();
 
-            Console.Clear();
+            ConsoleUtils.Clear();
 
-            Console.WriteLine(SharedVars.DownloadQueue
+            ConsoleUtils.WriteLine(SharedVars.DownloadQueue
                                             .Select((link, idx) => $"{idx + 1}. {link.Name}")
                                             .Prepend("Downloaded:")
                                             .Join()
@@ -223,9 +229,39 @@ namespace CoursesDownloader.Downloader.Implementation
             SharedVars.DownloadQueue.Clear();
 
 
-            Console.WriteLine();
+            ConsoleUtils.WriteLine();
         }
-        
+
+        private static async Task HandleExternalLinksThatAreFiles(IList<IDownloadableLink> required = null)
+        {
+            var externalLinks = SharedVars.DownloadQueue.OfType<IExternalLink>().ToList();
+
+            foreach (var externalLink in externalLinks)
+            {
+                var indexInRequired = required?.IndexOf(externalLink) ?? -1;
+                if (required != null && indexInRequired < 0)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    await externalLink.GetNameFromUrlNow();
+                }
+                catch (ExternalUrlIsFileException e)
+                {
+                    var indexInDownloadQueue = SharedVars.DownloadQueue.FindIndex(d => e.ExternalLink.Equals(d));
+                    SharedVars.DownloadQueue[indexInDownloadQueue] = e.FileLink;
+
+                    if (required != null && indexInRequired >= 0)
+                    {
+                        await e.FileLink.GetNameFromUrlNow();
+                        required[indexInRequired] = e.FileLink;
+                    }
+                }
+            }
+        }
+
         private static async Task TriggerDownloadFile(IDownloadableLink link, string[] middlePath, int started, int totalLen)
         {
             ProgressBarUtil.InitFileProgressBar(link);

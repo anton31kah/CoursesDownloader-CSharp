@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoursesDownloader.Models", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoursesDownloader.SharedVariables", "CoursesDownloader.SharedVariables\CoursesDownloader.SharedVariables.csproj", "{884A0BC8-9EC8-41E3-B6D9-B6181FCDE46D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoursesDownloader.Tests", "CoursesDownloader.Tests\CoursesDownloader.Tests.csproj", "{4AD90000-28AF-42B0-B73F-272BC3DDBD0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{884A0BC8-9EC8-41E3-B6D9-B6181FCDE46D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{884A0BC8-9EC8-41E3-B6D9-B6181FCDE46D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{884A0BC8-9EC8-41E3-B6D9-B6181FCDE46D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AD90000-28AF-42B0-B73F-272BC3DDBD0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AD90000-28AF-42B0-B73F-272BC3DDBD0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AD90000-28AF-42B0-B73F-272BC3DDBD0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AD90000-28AF-42B0-B73F-272BC3DDBD0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

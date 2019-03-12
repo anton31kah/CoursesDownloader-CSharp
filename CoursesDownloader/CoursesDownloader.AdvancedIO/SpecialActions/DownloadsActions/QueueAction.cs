@@ -35,9 +35,9 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
 
             do
             {
-                Console.Clear();
+                ConsoleUtils.Clear();
 
-                Console.WriteLine("Queue:");
+                ConsoleUtils.WriteLine("Queue:");
 
                 var totalPages = (int) Math.Ceiling(SharedVars.DownloadQueue.Count / 20.0);
 

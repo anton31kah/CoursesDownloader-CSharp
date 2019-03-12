@@ -1,9 +1,19 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 
 namespace CoursesDownloader.AdvancedIO.ConsoleHelpers
 {
     public static class ConsoleUtils
     {
+        public static void MockConsole(TextReader inputReader, TextWriter outputWriter)
+        {
+            Console.SetIn(inputReader);
+            Console.SetOut(outputWriter);
+        }
+
+        public static bool IsMockConsole => Console.IsOutputRedirected;
+
         #region With ConsoleColor
 
         public static string ReadLine(string message = null, ConsoleColor? messageColor = null, ConsoleColor? inputColor = null, bool isPassword = false)
@@ -109,5 +119,33 @@ namespace CoursesDownloader.AdvancedIO.ConsoleHelpers
 
             return password;
         }
+
+        #region Other Methods Just Wrapped
+
+        public static void Clear()
+        {
+            if (!IsMockConsole)
+            {
+                Console.Clear();
+            }
+        }
+
+        public static Encoding OutputEncoding
+        {
+            get => Console.OutputEncoding;
+            set => Console.OutputEncoding = value;
+        }
+
+        public static void AddCancelKeyPressEvent(ConsoleCancelEventHandler handler)
+        {
+            Console.CancelKeyPress += handler;
+        }
+
+        public static void RemoveCancelKeyPressEvent(ConsoleCancelEventHandler handler)
+        {
+            Console.CancelKeyPress -= handler;
+        }
+        
+        #endregion
     }
 }
