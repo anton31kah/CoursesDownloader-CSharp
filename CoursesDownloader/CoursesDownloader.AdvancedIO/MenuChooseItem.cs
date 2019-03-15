@@ -12,7 +12,7 @@ namespace CoursesDownloader.AdvancedIO
 {
     public static class MenuChooseItem
     {
-        public static T AskInputForSingleItemFromList<T>(IList<T> itemsList, string itemWord,
+        public static T AskInputForSingleItemFromList<T>(IList<T> itemsList, string itemWord, RunningActionType? runningAction = null,
             string actionWord = "view", bool withClear = true, bool insideCall = false, bool breadcrumbs = true)
         {
             if (withClear)
@@ -95,13 +95,13 @@ namespace CoursesDownloader.AdvancedIO
 
             if (!insideCall && breadcrumbs)
             {
-                SharedVars.ChosenItemsTillNow[itemWord] = $"You chose {selectedItem?.ToString().FirstLine().TrimInnerSpaces()}";
+                SharedVars.ChosenItemsTillNow[runningAction.GetValueOrDefault()] = $"You chose {selectedItem?.ToString().FirstLine().TrimInnerSpaces()}";
             }
 
             return selectedItem;
         }
 
-        public static IEnumerable<T> AskInputForMultipleItemsFromList<T>(IList<T> itemsList, string itemsWord,
+        public static IEnumerable<T> AskInputForMultipleItemsFromList<T>(IList<T> itemsList, string itemsWord, RunningActionType? runningAction = null,
             string actionWord = "download")
         {
             ConsoleUtils.Clear();
@@ -192,7 +192,7 @@ namespace CoursesDownloader.AdvancedIO
                         }
 
                         var choiceSelected = AskInputForSingleItemFromList(
-                            choicesPossible, "choice", "choose", withClear: false, insideCall: true
+                            choicesPossible, "choice", null, "choose", withClear: false, insideCall: true
                             );
 
                         if (choiceSelected == choicesPossible[0])
@@ -229,7 +229,7 @@ namespace CoursesDownloader.AdvancedIO
 
             selectedItems = selectedItems.SortedUnique().ToList();
 
-            SharedVars.ChosenItemsTillNow[itemsWord] = $"You chose {BuildRangesString(selectedItems)}";
+            SharedVars.ChosenItemsTillNow[runningAction.GetValueOrDefault()] = $"You chose {BuildRangesString(selectedItems)}";
 
             return selectedItems.Select(i => itemsList[i - 1]).ToList();
         }
@@ -243,7 +243,6 @@ namespace CoursesDownloader.AdvancedIO
             while (!confirmationIsValid)
             {
                 var confirmation = ConsoleUtils.ReadLine(confirmMessage, ConsoleIOType.YesNoQuestion) 
-//                                   ?? throw new NullReferenceException("Console.ReadLine returned null, input stream reached an end");
                                    ?? "no";
                 var fullInputString = confirmation;
                 confirmation = confirmation.IsNotEmpty() ? confirmation[0].ToString().ToLower() : "";

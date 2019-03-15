@@ -32,7 +32,7 @@ namespace CoursesDownloader.Downloader.Implementation
         private static async Task<ICourseLink> AskForCourse()
         {
             await CoursesExtractor.ExtractCourses();
-            var result = MenuChooseItem.AskInputForSingleItemFromList(SharedVars.Courses, "course");
+            var result = MenuChooseItem.AskInputForSingleItemFromList(SharedVars.Courses, "course", RunningActionType.AskForCourse);
             SharedVars.SelectedCourseLink = result;
             return result;
         }
@@ -40,14 +40,14 @@ namespace CoursesDownloader.Downloader.Implementation
         private static async Task<ISection> AskForSection()
         {
             await SectionExtractor.ExtractSectionsForCourse(SharedVars.SelectedCourseLink);
-            var result = MenuChooseItem.AskInputForSingleItemFromList(SharedVars.Sections, "section");
+            var result = MenuChooseItem.AskInputForSingleItemFromList(SharedVars.Sections, "section", RunningActionType.AskForSection);
             SharedVars.SelectedSection = result;
             return result;
         }
 
         private static IEnumerable<IDownloadableLink> AskForMultipleLinks()
         {
-            var result = MenuChooseItem.AskInputForMultipleItemsFromList(SharedVars.SelectedSection.Links, "files").ToList();
+            var result = MenuChooseItem.AskInputForMultipleItemsFromList(SharedVars.SelectedSection.Links, "files", RunningActionType.AskForMultipleLinks).ToList();
             SharedVars.DownloadQueue.AddUnique(result);
             return result;
         }
@@ -66,7 +66,7 @@ namespace CoursesDownloader.Downloader.Implementation
 
             while (true)
             {
-                var result = MenuChooseItem.AskInputForSingleItemFromList(choicesPossible, "choice", "choose");
+                var result = MenuChooseItem.AskInputForSingleItemFromList(choicesPossible, "choice", RunningActionType.AskForNamingMethod, "choose");
 
                 if (result == choicesPossible[0])
                 {
@@ -181,25 +181,25 @@ namespace CoursesDownloader.Downloader.Implementation
         {
             await HandleExternalLinksThatAreFiles();
 
-            var totalLen = SharedVars.DownloadQueue.Count;
+            var downloadStats = new DownloadStats(SharedVars.DownloadQueue.Count);
 
             ConsoleUtils.Clear();
 
-            ProgressBarUtil.InitMainProgressBar(totalLen);
+            ProgressBarUtil.InitMainProgressBar(downloadStats.Total);
             
             var extraPathPerLink = ExtraPathsHelper.FillExtraPaths();
 
             var downloadBatch = new List<Task>();
             
             const int batch = 5;
-            var started = 0;
 
             // solution provided from here https://stackoverflow.com/a/54894420/6877477
             foreach (var link in SharedVars.DownloadQueue)
             {
                 extraPathPerLink.TryGetValue(link, out var middlePath);
 
-                var task = TriggerDownloadFile(link, middlePath, ++started, totalLen);
+                var task = TriggerDownloadFile(link, middlePath, downloadStats);
+
                 downloadBatch.Add(task);
 
                 if (downloadBatch.Count == batch)
@@ -213,8 +213,8 @@ namespace CoursesDownloader.Downloader.Implementation
             // Wait for all of the remaining Tasks to complete
             await Task.WhenAll(downloadBatch);
 
-            
-            ProgressBarUtil.TickMain($"Downloaded all {totalLen} / {totalLen}");
+
+            ProgressBarUtil.TickMain(downloadStats.Done, $"Downloaded all {downloadStats.Done} / {downloadStats.Total}");
 
             ProgressBarUtil.Dispose();
 
@@ -261,12 +261,23 @@ namespace CoursesDownloader.Downloader.Implementation
                 }
             }
         }
-
-        private static async Task TriggerDownloadFile(IDownloadableLink link, string[] middlePath, int started, int totalLen)
+        
+        private static async Task TriggerDownloadFile(IDownloadableLink link, string[] middlePath, DownloadStats downloadStats)
         {
+            void TickMain() => ProgressBarUtil.TickMain(downloadStats.Done, $"Downloading... {downloadStats}");
+
+
+            downloadStats.Start();
+
             ProgressBarUtil.InitFileProgressBar(link);
-            ProgressBarUtil.TickMain($"Downloading... {started} / {totalLen}");
+
+            TickMain();
+
             await link.Download(middlePath);
+
+            downloadStats.End();
+
+            TickMain();
         }
         
         public static void Dispose()

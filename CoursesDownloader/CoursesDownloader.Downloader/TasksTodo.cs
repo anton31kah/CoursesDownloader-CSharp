@@ -26,6 +26,6 @@
 
         // TO/DO 11 if external url is not text/html (content-type) then download as file
 
-        // TODO 12 download progress count should show: downloaded = X, in progress = Y (max 5), waiting = Z
+        // TO/DO 12 download progress count should show: downloaded = X, in progress = Y (max 5), waiting = Z, total = W
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CoursesDownloader.IModels;
 using CoursesDownloader.IModels.ILinks;
 
@@ -10,10 +11,11 @@ namespace CoursesDownloader.SharedVariables
         
         #region Backing Fields
 
+        private static Queue<RunningActionType> _previousRunningActionTypes;
         private static RunningActionType _currentRunningActionType;
         private static List<ICourseLink> _courses;
         private static List<ISection> _sections;
-        private static Dictionary<string, string> _chosenItemsTillNow;
+        private static SortedDictionary<RunningActionType, string> _chosenItemsTillNow;
         private static ICourseLink _selectedCourseLink;
         private static ISection _selectedSection;
         private static List<IDownloadableLink> _selectedLinks;
@@ -22,6 +24,26 @@ namespace CoursesDownloader.SharedVariables
         private static int _currentSemesterNumber;
 
         #endregion
+
+        public static Queue<RunningActionType> PreviousRunningActionTypes
+        {
+            get
+            {
+                lock (Lock)
+                {
+                    _previousRunningActionTypes = _previousRunningActionTypes ?? new Queue<RunningActionType>();
+                    return _previousRunningActionTypes;
+                }
+            }
+            private set
+            {
+                lock (value)
+                {
+                    _previousRunningActionTypes = _previousRunningActionTypes ?? new Queue<RunningActionType>();
+                    _previousRunningActionTypes = value;
+                }
+            }
+        }
 
         public static RunningActionType CurrentRunningActionType
         {
@@ -36,11 +58,13 @@ namespace CoursesDownloader.SharedVariables
             {
                 lock (Lock)
                 {
+                    EnqueueActionAndClear(value);
+                    
                     _currentRunningActionType = value;
                 }
             }
         }
-        
+
         public static List<ICourseLink> Courses
         {
             get
@@ -79,13 +103,13 @@ namespace CoursesDownloader.SharedVariables
             }
         }
 
-        public static Dictionary<string, string> ChosenItemsTillNow
+        public static SortedDictionary<RunningActionType, string> ChosenItemsTillNow
         {
             get
             {
                 lock (Lock)
                 {
-                    _chosenItemsTillNow = _chosenItemsTillNow ?? new Dictionary<string, string>();
+                    _chosenItemsTillNow = _chosenItemsTillNow ?? new SortedDictionary<RunningActionType, string>();
                     return _chosenItemsTillNow;
                 }
             }
@@ -192,5 +216,43 @@ namespace CoursesDownloader.SharedVariables
                 }
             }
         }
+
+
+        /// <summary>
+        /// At the end of this method, PreviousRunningActionTypes will have the last running range only
+        /// </summary>
+        /// <param name="value"></param>
+        private static void EnqueueActionAndClear(RunningActionType value)
+        {
+            // enqueue, if queue overloads, dequeue
+            PreviousRunningActionTypes.Enqueue(value);
+            if (PreviousRunningActionTypes.Count > 10)
+            {
+                PreviousRunningActionTypes.Dequeue();
+            }
+
+            // clear any actions from previous "sessions" of runs (so only the most recent "session" of actions is stored)
+            var toRemove = PreviousRunningActionTypes.ToList().FindLastIndex(i => i >= RunningActionType.Repeat);
+            for (var _ = 0; _ <= toRemove; _++)
+            {
+                PreviousRunningActionTypes.Dequeue();
+            }
+
+            // if previous sessions were going back and forth, then keep the most recent ascending slice
+            var runningActionTypes = PreviousRunningActionTypes
+                .Reverse()
+                .TakeWhile(c => c > RunningActionType.AskForCourse)
+                .Concat(
+                    PreviousRunningActionTypes
+                        .Reverse()
+                        .SkipWhile(c => c > RunningActionType.AskForCourse)
+                        .Take(1)
+                )
+                .Reverse();
+
+            PreviousRunningActionTypes = new Queue<RunningActionType>(runningActionTypes);
+
+        }
+
     }
 }

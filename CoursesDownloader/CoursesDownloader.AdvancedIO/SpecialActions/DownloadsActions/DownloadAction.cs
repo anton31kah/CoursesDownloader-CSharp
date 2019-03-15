@@ -1,4 +1,6 @@
-﻿using CoursesDownloader.SharedVariables;
+﻿using System.Linq;
+using CoursesDownloader.AdvancedIO.ConsoleHelpers;
+using CoursesDownloader.SharedVariables;
 
 namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
 {
@@ -14,7 +16,18 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.DownloadsActions
             if (inputString.ToLower().Contains(Type.ToLower()))
             {
                 ConfirmAction("start downloading the download queue",
-                    () => { State = ActionState.FoundAndHandled; });
+                    () =>
+                    {
+                        if (SharedVars.DownloadQueue.Any())
+                        {
+                            State = ActionState.FoundAndHandled;
+                        }
+                        else
+                        {
+                            ConsoleUtils.WriteLine("Download queue is empty", ConsoleIOType.Error);
+                            State = ActionState.NotFound;
+                        }
+                    });
             }
 
             return this;

@@ -18,11 +18,7 @@ namespace CoursesDownloader.AdvancedIO.SpecialActions.ConsoleActions
                     () =>
                     {
                         State = ActionState.FoundAndHandled;
-                        var pastStates = SharedVars.ChosenItemsTillNow.Keys.ToArray();
-                        foreach (var pastState in pastStates)
-                        {
-                            SharedVars.ChosenItemsTillNow.Remove(pastState);
-                        }
+                        SharedVars.ChosenItemsTillNow.Clear();
                     });
             }
 

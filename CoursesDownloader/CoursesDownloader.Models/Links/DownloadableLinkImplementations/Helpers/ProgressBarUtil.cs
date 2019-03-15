@@ -52,11 +52,11 @@ namespace CoursesDownloader.Models.Links.DownloadableLinkImplementations.Helpers
             TimeByteBpsStamps.TryAdd(link, new TimeByteBpsStamp(DateTime.MinValue));
         }
 
-        public static void TickMain(string message)
+        public static void TickMain(int done, string message)
         {
             if (ConsoleUtils.IsMockConsole) return;
 
-            _parentProgressBar.Tick(message);
+            _parentProgressBar.Tick(done, message);
         }
         
         public static void TickFile(DownloadableLink link, double bytesTransferred, double bytesTotal)

@@ -106,7 +106,6 @@ namespace CoursesDownloader.Client
             while (username.IsNullOrEmpty())
             {
                 username = ConsoleUtils.ReadLine("Please enter your CAS username >>> ", ConsoleIOType.Question);
-                // if (username == null) throw new NullReferenceException("Console.ReadLine returned null, input stream reached an end");
             }
 
             while (password.IsNullOrEmpty())

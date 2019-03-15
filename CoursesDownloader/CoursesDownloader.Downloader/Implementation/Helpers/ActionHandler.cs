@@ -157,7 +157,7 @@ namespace CoursesDownloader.Downloader.Implementation.Helpers
             
             var itemsList = namedSemesters.Take(semestersCount).ToList();
 
-            var chosenItem = MenuChooseItem.AskInputForSingleItemFromList(itemsList, "semester", "switch to", breadcrumbs: false);
+            var chosenItem = MenuChooseItem.AskInputForSingleItemFromList(itemsList, "semester", null, "switch to", breadcrumbs: false);
 
             var chosenSemester = namedSemesters.IndexOf(chosenItem) + 1;
 
