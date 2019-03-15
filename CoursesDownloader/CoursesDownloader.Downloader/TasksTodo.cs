@@ -8,7 +8,7 @@
 
         // TODO 02 logging
 
-        // TODO 03 login get timeout (in client, login wait time before we declare courses as down)
+        // TO/DO 03 login get timeout (in client, login wait time before we declare courses as down)
 
         // TO/DO DONE 04 multiple downloads
 
@@ -25,5 +25,7 @@
         // TODO 10 openfolder action
 
         // TO/DO 11 if external url is not text/html (content-type) then download as file
+
+        // TODO 12 download progress count should show: downloaded = X, in progress = Y (max 5), waiting = Z
     }
 }

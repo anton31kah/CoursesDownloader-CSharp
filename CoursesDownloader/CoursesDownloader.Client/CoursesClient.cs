@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using CoursesDownloader.AdvancedIO;
 using CoursesDownloader.AdvancedIO.ConsoleHelpers;
@@ -49,18 +50,27 @@ namespace CoursesDownloader.Client
 
                 try
                 {
-                    login = await SessionClient.GetAsync("http://courses.finki.ukim.mk/login/index.php");
+                    var cancellationTokenSource = new CancellationTokenSource();
+                    var cancellationToken = cancellationTokenSource.Token;
+
+                    cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(15));
+
+                    login = await SessionClient.GetAsync("http://courses.finki.ukim.mk/login/index.php",
+                        cancellationToken);
 
                     if (!login.IsSuccessStatusCode)
                     {
                         throw new HttpRequestException();
                     }
                 }
-                catch (HttpRequestException)
+                catch (Exception e) when (
+                    e is HttpRequestException
+                    || e is TaskCanceledException
+                )
                 {
                     ConsoleUtils.WriteLine("Connection cannot be established");
                     var shouldRetry = MenuChooseItem.AskYesNoQuestion("Do you want to try again? [Y/N] ",
-                        ConsoleUtils.Clear, 
+                        ConsoleUtils.Clear,
                         () => { Environment.Exit(0); });
 
                     if (shouldRetry) // onYes
